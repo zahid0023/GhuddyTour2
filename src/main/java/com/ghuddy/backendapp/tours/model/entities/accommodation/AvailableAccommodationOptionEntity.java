@@ -1,6 +1,8 @@
 package com.ghuddy.backendapp.tours.model.entities.accommodation;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
+import com.ghuddy.backendapp.tours.model.entities.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,4 +31,11 @@ public class AvailableAccommodationOptionEntity extends BaseEntity {
     @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
+
+    @OneToMany(mappedBy = "availableAccommodationOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AvailableComponentsInclusiveOptionsCombinationEntity> availableComponentsInclusiveOptionEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "availableAccommodationOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AvailableComponentsAllOptionsCombinationEntity> availableComponentsAllOptionsCombinationEntities = new ArrayList<>();
+
 }

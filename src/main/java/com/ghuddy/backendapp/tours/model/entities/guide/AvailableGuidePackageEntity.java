@@ -26,8 +26,5 @@ public class AvailableGuidePackageEntity extends BaseEntity {
     @NotNull
     @Column(name = "day_number", nullable = false)
     private Integer dayNumber;
-    @NotNull
-    @Column(name = "number_of_guides_for_day", nullable = false)
-    private Integer numberOfGuidesForDay;
 
 }

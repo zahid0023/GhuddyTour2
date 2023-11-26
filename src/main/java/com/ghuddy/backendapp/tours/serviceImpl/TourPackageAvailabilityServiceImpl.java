@@ -7,12 +7,18 @@ import com.ghuddy.backendapp.tours.dto.request.availability.spot.entry.SpotEntry
 import com.ghuddy.backendapp.tours.dto.request.availability.tourpackage.TourPackageAvailabilitySetRequest;
 import com.ghuddy.backendapp.tours.dto.request.availability.transfer.TransferOptionRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.transportation.TransportationPackageRequestForAvailability;
+import com.ghuddy.backendapp.tours.model.data.OptionPriceData;
+import com.ghuddy.backendapp.tours.model.entities.AvailableComponentsAllOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AccommodationPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationPackageEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableFoodOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableMealPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.MealPackageEntity;
+import com.ghuddy.backendapp.tours.model.entities.guide.AvailableGuideOptionEntity;
+import com.ghuddy.backendapp.tours.model.entities.guide.AvailableGuidePackageEntity;
+import com.ghuddy.backendapp.tours.model.entities.guide.GuidePackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.spot.entry.AvailableSpotEntryOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.spot.entry.AvailableSpotEntryPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.spot.entry.SpotEntryPackageEntity;
@@ -28,6 +34,7 @@ import com.ghuddy.backendapp.tours.repository.AvailabilityGeneratedTourPackageRe
 import com.ghuddy.backendapp.tours.repository.AvailableTourPackageRepository;
 import com.ghuddy.backendapp.tours.service.*;
 import com.ghuddy.backendapp.tours.utils.CombinationGenerator;
+import com.ghuddy.backendapp.tours.utils.OptionPriceCalculator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +57,7 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
     private final TransferService transferService;
     private final TransportationService transportationService;
     private final SpotEntryService spotEntryService;
+    private final GuideService guideService;
 
     public TourPackageAvailabilityServiceImpl(AvailabilityGeneratedTourPackageRepository availabilityGeneratedTourPackageRepository,
                                               AccommodationService accommodationService,
@@ -58,7 +66,8 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                               TransportationService transportationService,
                                               TourPackageService tourPackageService,
                                               SpotEntryService spotEntryService,
-                                              AvailableTourPackageRepository availableTourPackageRepository) {
+                                              AvailableTourPackageRepository availableTourPackageRepository,
+                                              GuideService guideService) {
         this.availabilityGeneratedTourPackageRepository = availabilityGeneratedTourPackageRepository;
         this.accommodationService = accommodationService;
         this.foodService = foodService;
@@ -67,12 +76,15 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
         this.tourPackageService = tourPackageService;
         this.spotEntryService = spotEntryService;
         this.availableTourPackageRepository = availableTourPackageRepository;
+        this.guideService = guideService;
     }
 
     @Override
-    public void generateTourPackageAvailabilityOptions(SubscribedTourEntity subscribedTourEntity,TourPackageAvailabilitySetRequest tourPackageAvailabilitySetRequest) {
-        AvailableTourPackageEntity availableTourPackageEntity = prepareAvailableTourPackageEntity(subscribedTourEntity,tourPackageAvailabilitySetRequest);
+    public void generateTourPackageAvailabilityOptions(SubscribedTourEntity subscribedTourEntity, TourPackageAvailabilitySetRequest tourPackageAvailabilitySetRequest) {
+        AvailableTourPackageEntity availableTourPackageEntity = prepareAvailableTourPackageEntity(subscribedTourEntity, tourPackageAvailabilitySetRequest);
         availableTourPackageEntity.setStatus("DRAFT");
+        availableTourPackageEntity.setAvailableComponentsInclusiveOptionEntities(inclusiveComponentsCombinations(availableTourPackageEntity));
+        availableTourPackageEntity.setAvailableComponentsAllOptionsCombinationEntities(allComponentsCombinations(availableTourPackageEntity));
         availableTourPackageEntity = availableTourPackageRepository.save(availableTourPackageEntity);
     }
 
@@ -116,10 +128,12 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
             availableTourPackageEntity.setAvailableTransportationPackageEntities(setTransportations(availableTourPackageEntity, transportationOptions));
         }
 
-        // Set Guide Package
+        // Set Guides
         if (tourPackageAvailabilitySetRequest.getTourPackageGuideIsInclusive() != null && tourPackageAvailabilitySetRequest.getTourPackageGuideIsInclusive())
             availableTourPackageEntity.setIsGuideInclusive(true);
         List<GuideOptionRequestForAvailability> guideOptions = tourPackageAvailabilitySetRequest.getGuideOptionRequestForAvailabilityList();
+        if (guideOptions != null && !guideOptions.isEmpty())
+            availableTourPackageEntity.setAvailableGuideOptionEntities(setGuides(availableTourPackageEntity, guideOptions));
 
         // Set Spot Entry
         if (tourPackageAvailabilitySetRequest.getTourPackageSpotEntryIsInclusive() != null && tourPackageAvailabilitySetRequest.getTourPackageSpotEntryIsInclusive()) {
@@ -293,4 +307,228 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                 })
                 .collect(Collectors.toList());
     }
+
+    private List<AvailableGuideOptionEntity> setGuides(AvailableTourPackageEntity availableTourPackageEntity, List<GuideOptionRequestForAvailability> guideOptionRequestForAvailabilityList) {
+        Set<Long> guidePackageIds = guideOptionRequestForAvailabilityList.stream()
+                .flatMap(guideOptionRequestForAvailability -> guideOptionRequestForAvailability.getGuidePackageRequestForAvailabilityList().stream()
+                        .map(guidePackageRequestForAvailability -> guidePackageRequestForAvailability.getGuidePackageId()))
+                .collect(Collectors.toSet());
+        Map<Long, GuidePackageEntity> guidePackageEntityMap = guideService.getGuidePackageEntitiesById(guidePackageIds);
+        log.info(guidePackageEntityMap.toString());
+        return guideOptionRequestForAvailabilityList.stream()
+                .map(guideOptionRequestForAvailability -> {
+                    AvailableGuideOptionEntity availableGuideOptionEntity = new AvailableGuideOptionEntity();
+                    availableGuideOptionEntity.setTotalOptionPricePerPerson(BigDecimal.ZERO);
+                    List<AvailableGuidePackageEntity> availableSpotEntryPackageEntityList = guideOptionRequestForAvailability.getGuidePackageRequestForAvailabilityList().stream()
+                            .map(guidePackageRequestForAvailability -> {
+                                AvailableGuidePackageEntity availableGuidePackageEntity = new AvailableGuidePackageEntity();
+                                availableGuidePackageEntity.setAvailableGuideOptionEntity(availableGuideOptionEntity);
+                                GuidePackageEntity guidePackageEntity = guidePackageEntityMap.get(guidePackageRequestForAvailability.getGuidePackageId());
+                                availableGuidePackageEntity.setGuidePackageEntity(guidePackageEntity);
+                                availableGuidePackageEntity.setDayNumber(guidePackageRequestForAvailability.getDayNumber());
+                                BigDecimal perGuidePackagePrice = guidePackageRequestForAvailability.getGuidePackagePrice();
+                                availableGuidePackageEntity.setTotalGuidePackagePrice(perGuidePackagePrice);
+                                availableGuideOptionEntity.setTotalOptionPricePerPerson(availableGuideOptionEntity.getTotalOptionPricePerPerson().add(perGuidePackagePrice));
+                                return availableGuidePackageEntity;
+                            })
+                            .toList();
+                    availableGuideOptionEntity.setAvailableGuidePackageEntityList(availableSpotEntryPackageEntityList);
+                    availableGuideOptionEntity.setAvailableTourPackageEntity(availableTourPackageEntity);
+                    log.info(availableGuideOptionEntity.getAvailableTourPackageEntity().toString());
+                    return availableGuideOptionEntity;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<AvailableComponentsInclusiveOptionsCombinationEntity> inclusiveComponentsCombinations(AvailableTourPackageEntity availableTourPackageEntity) {
+        List<List<?>> tourPackageCombinationToCheck = combinationToCheckForAllInclusiveOptions(availableTourPackageEntity);
+        List<List<?>> combinations = CombinationGenerator.generateCombinations(tourPackageCombinationToCheck);
+
+        List<AvailableComponentsInclusiveOptionsCombinationEntity> inclusiveOptionsCombinationEntityList = combinations.stream()
+                .map(option -> {
+                    AvailableComponentsInclusiveOptionsCombinationEntity inclusiveOptionsCombinationEntity = new AvailableComponentsInclusiveOptionsCombinationEntity();
+                    inclusiveOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(BigDecimal.ZERO);
+
+                    option.forEach(component -> {
+                        if (component.getClass().isAssignableFrom(AvailableAccommodationOptionEntity.class)) {
+                            AvailableAccommodationOptionEntity accommodationOptionEntity = (AvailableAccommodationOptionEntity) component;
+                            inclusiveOptionsCombinationEntity.setAvailableAccommodationOptionEntity(accommodationOptionEntity);
+                            updateCombinationPrices(inclusiveOptionsCombinationEntity, accommodationOptionEntity.getTotalOptionPricePerPerson());
+
+                        } else if (component.getClass().isAssignableFrom(AvailableFoodOptionEntity.class)) {
+                            AvailableFoodOptionEntity foodOptionEntity = (AvailableFoodOptionEntity) component;
+                            inclusiveOptionsCombinationEntity.setAvailableFoodOptionEntity(foodOptionEntity);
+                            updateCombinationPrices(inclusiveOptionsCombinationEntity, foodOptionEntity.getTotalOptionPricePerPerson());
+
+                        } else if (component.getClass().isAssignableFrom(AvailableTransferOptionEntity.class)) {
+                            AvailableTransferOptionEntity transferOptionEntity = (AvailableTransferOptionEntity) component;
+                            inclusiveOptionsCombinationEntity.setAvailableTransferOptionEntity(transferOptionEntity);
+                            updateCombinationPrices(inclusiveOptionsCombinationEntity, transferOptionEntity.getTotalOptionPricePerPerson());
+
+                        } else if (component.getClass().isAssignableFrom(AvailableGuideOptionEntity.class)) {
+                            AvailableGuideOptionEntity guideOptionEntity = (AvailableGuideOptionEntity) component;
+                            inclusiveOptionsCombinationEntity.setAvailableGuideOptionEntity(guideOptionEntity);
+                            updateCombinationPrices(inclusiveOptionsCombinationEntity, BigDecimal.ZERO); // Adjust as needed
+
+                        } else if (component.getClass().isAssignableFrom(AvailableSpotEntryOptionEntity.class)) {
+                            AvailableSpotEntryOptionEntity spotEntryOptionEntity = (AvailableSpotEntryOptionEntity) component;
+                            inclusiveOptionsCombinationEntity.setAvailableSpotEntryOptionEntity(spotEntryOptionEntity);
+                            updateCombinationPrices(inclusiveOptionsCombinationEntity, spotEntryOptionEntity.getTotalOptionPricePerPerson());
+                        }
+                    });
+                    setInclusiveComponentsOptionPrice(inclusiveOptionsCombinationEntity);
+                    inclusiveOptionsCombinationEntity.setAvailableTourPackageEntity(availableTourPackageEntity);
+                    return inclusiveOptionsCombinationEntity;
+                })
+                .toList();
+        return inclusiveOptionsCombinationEntityList;
+    }
+
+    private List<AvailableComponentsAllOptionsCombinationEntity> allComponentsCombinations(AvailableTourPackageEntity availableTourPackageEntity) {
+        List<List<?>> tourPackageCombinationToCheck = combinationToCheckForAllOptions(availableTourPackageEntity);
+        List<List<?>> combinations = CombinationGenerator.generateCombinations(tourPackageCombinationToCheck);
+
+        List<AvailableComponentsAllOptionsCombinationEntity> availableComponentsAllOptionsCombinationEntityList = combinations.stream()
+                .map(option -> {
+                    AvailableComponentsAllOptionsCombinationEntity allOptionsCombinationEntity = new AvailableComponentsAllOptionsCombinationEntity();
+                    allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(BigDecimal.ZERO);
+                    option.forEach(component -> {
+                        if (component.getClass().isAssignableFrom(AvailableAccommodationOptionEntity.class)) {
+                            AvailableAccommodationOptionEntity accommodationOptionEntity = (AvailableAccommodationOptionEntity) component;
+                            allOptionsCombinationEntity.setAvailableAccommodationOptionEntity(accommodationOptionEntity);
+                            allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(accommodationOptionEntity.getTotalOptionPricePerPerson()));
+                        } else if (component.getClass().isAssignableFrom(AvailableFoodOptionEntity.class)) {
+                            AvailableFoodOptionEntity foodOptionEntity = (AvailableFoodOptionEntity) component;
+                            allOptionsCombinationEntity.setAvailableFoodOptionEntity(foodOptionEntity);
+                            allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(BigDecimal.ZERO));
+                        } else if (component.getClass().isAssignableFrom(AvailableTransferOptionEntity.class)) {
+                            AvailableTransferOptionEntity transferOptionEntity = (AvailableTransferOptionEntity) component;
+                            allOptionsCombinationEntity.setAvailableTransferOptionEntity(transferOptionEntity);
+                            allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(transferOptionEntity.getTotalOptionPricePerPerson()));
+                        } else if (component.getClass().isAssignableFrom(AvailableTransportationPackageEntity.class)) {
+                            AvailableTransportationPackageEntity transportationPackageEntity = (AvailableTransportationPackageEntity) component;
+                            allOptionsCombinationEntity.setAvailableTransportationPackageEntity(transportationPackageEntity);
+                            allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(transportationPackageEntity.getTransportationPackagePrice()));
+                        } else if (component.getClass().isAssignableFrom(AvailableGuideOptionEntity.class)) {
+                            AvailableGuideOptionEntity availableGuideOptionEntity = (AvailableGuideOptionEntity) component;
+                            allOptionsCombinationEntity.setAvailableGuideOptionEntity(availableGuideOptionEntity);
+                            allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(availableGuideOptionEntity.getTotalOptionPricePerPerson()));
+                        } else if (component.getClass().isAssignableFrom(AvailableSpotEntryOptionEntity.class)) {
+                            AvailableSpotEntryOptionEntity spotEntryOptionEntity = (AvailableSpotEntryOptionEntity) component;
+                            allOptionsCombinationEntity.setAvailableSpotEntryOptionEntity(spotEntryOptionEntity);
+                            allOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(spotEntryOptionEntity.getTotalOptionPricePerPerson()));
+                        }
+                    });
+
+                    setAllComponentOptionPrice(allOptionsCombinationEntity);
+                    allOptionsCombinationEntity.setAvailableTourPackageEntity(availableTourPackageEntity);
+                    return allOptionsCombinationEntity;
+                })
+                .toList();
+        return availableComponentsAllOptionsCombinationEntityList;
+    }
+
+
+    private void updateCombinationPrices(AvailableComponentsInclusiveOptionsCombinationEntity inclusiveOptionsCombinationEntity, BigDecimal optionPrice) {
+        // the sum of component option combination price
+        inclusiveOptionsCombinationEntity.setGhuddyPlatformCalculatedOptionPricePerPerson(inclusiveOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson().add(optionPrice));
+    }
+
+    private void setInclusiveComponentsOptionPrice(AvailableComponentsInclusiveOptionsCombinationEntity inclusiveOptionsCombinationEntity) {
+        OptionPriceData optionPriceData = OptionPriceCalculator.getBlackPrice(inclusiveOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson(), BigDecimal.ZERO); // before ghuddy subsidy
+        optionPriceData = OptionPriceCalculator.getRedPrice(optionPriceData.getNetOptionPriceAfterGhuddyCommission(), BigDecimal.ZERO, optionPriceData); // after ghuddy subsidy
+
+        inclusiveOptionsCombinationEntity.setMerchantSubsidyAmountPerPerson(optionPriceData.getMerchantSubsidyAmount());
+        inclusiveOptionsCombinationEntity.setNetOptionPricePerPersonAfterMerchantSubsidy(optionPriceData.getNetOptionPriceAfterMerchantSubsidy());
+
+        inclusiveOptionsCombinationEntity.setGhuddyPlatformCommissionAmount(optionPriceData.getGhuddyPlatformCommissionAmount());
+        inclusiveOptionsCombinationEntity.setNetOptionPricePerPersonAfterGhuddyCommission(optionPriceData.getNetOptionPriceAfterGhuddyCommission());
+
+        inclusiveOptionsCombinationEntity.setGhuddyWebsiteBlackPricePerPerson(optionPriceData.getGhuddyWebsiteBlackPrice());
+
+        inclusiveOptionsCombinationEntity.setGhuddySubsidyAmountPerPerson(optionPriceData.getGhuddySubsidyAmount());
+        inclusiveOptionsCombinationEntity.setNetOptionPricePerPersonAfterGhuddySubsidy(optionPriceData.getNetOptionPriceAfterGhuddySubsidy());
+
+        inclusiveOptionsCombinationEntity.setGhuddyWebsiteRedPricePerPerson(optionPriceData.getGhuddyWebsiteRedPrice());
+
+        inclusiveOptionsCombinationEntity.setPaymentGatewayAmount(optionPriceData.getPaymentGateWayAmount());
+    }
+
+    private void setAllComponentOptionPrice(AvailableComponentsAllOptionsCombinationEntity allOptionsCombinationEntity) {
+        OptionPriceData optionPriceData = OptionPriceCalculator.getBlackPrice(allOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson(), BigDecimal.ZERO); // before ghuddy subsidy
+        optionPriceData = OptionPriceCalculator.getRedPrice(optionPriceData.getNetOptionPriceAfterGhuddyCommission(), BigDecimal.ZERO, optionPriceData); // after ghuddy subsidy
+
+        allOptionsCombinationEntity.setMerchantSubsidyAmountPerPerson(optionPriceData.getMerchantSubsidyAmount());
+        allOptionsCombinationEntity.setNetOptionPricePerPersonAfterMerchantSubsidy(optionPriceData.getNetOptionPriceAfterMerchantSubsidy());
+
+        allOptionsCombinationEntity.setGhuddyPlatformCommissionAmount(optionPriceData.getGhuddyPlatformCommissionAmount());
+        allOptionsCombinationEntity.setNetOptionPricePerPersonAfterGhuddyCommission(optionPriceData.getNetOptionPriceAfterGhuddyCommission());
+
+        allOptionsCombinationEntity.setGhuddyWebsiteBlackPricePerPerson(optionPriceData.getGhuddyWebsiteBlackPrice());
+
+        allOptionsCombinationEntity.setGhuddySubsidyAmountPerPerson(optionPriceData.getGhuddySubsidyAmount());
+        allOptionsCombinationEntity.setNetOptionPricePerPersonAfterGhuddySubsidy(optionPriceData.getNetOptionPriceAfterGhuddySubsidy());
+
+        allOptionsCombinationEntity.setGhuddyWebsiteRedPricePerPerson(optionPriceData.getGhuddyWebsiteRedPrice());
+
+        allOptionsCombinationEntity.setPaymentGatewayAmount(optionPriceData.getPaymentGateWayAmount());
+    }
+
+
+    private List<List<?>> combinationToCheckForAllInclusiveOptions(AvailableTourPackageEntity availableTourPackageEntity) {
+        List<List<?>> tourPackageCombinationToCheck = new LinkedList<>();
+
+        addOptionEntitiesToListIfInclusive(
+                availableTourPackageEntity.getIsAccommodationInclusive(),
+                availableTourPackageEntity.getAvailableAccommodationOptionEntities(),
+                tourPackageCombinationToCheck);
+
+        addOptionEntitiesToListIfInclusive(
+                availableTourPackageEntity.getIsFoodInclusive(),
+                availableTourPackageEntity.getAvailableFoodOptionEntities(),
+                tourPackageCombinationToCheck);
+
+        addOptionEntitiesToListIfInclusive(
+                availableTourPackageEntity.getIsTransferInclusive(),
+                availableTourPackageEntity.getAvailableTransferOptionEntities(),
+                tourPackageCombinationToCheck);
+
+        addOptionEntitiesToListIfInclusive(
+                availableTourPackageEntity.getIsGuideInclusive(),
+                availableTourPackageEntity.getAvailableGuideOptionEntities(),
+                tourPackageCombinationToCheck);
+
+        addOptionEntitiesToListIfInclusive(
+                availableTourPackageEntity.getIsSpotEntryInclusive(),
+                availableTourPackageEntity.getAvailableSpotEntryOptionEntities(),
+                tourPackageCombinationToCheck);
+
+        return tourPackageCombinationToCheck;
+    }
+
+    private void addOptionEntitiesToListIfInclusive(boolean isInclusive, List<?> optionEntities, List<List<?>> combinationList) {
+        if (isInclusive && optionEntities != null && !optionEntities.isEmpty()) {
+            combinationList.add(optionEntities);
+        }
+    }
+
+    private List<List<?>> combinationToCheckForAllOptions(AvailableTourPackageEntity availableTourPackageEntity) {
+        List<List<?>> tourPackageCombinationToCheck = new LinkedList<>();
+
+        addOptionEntitiesToList(availableTourPackageEntity.getAvailableAccommodationOptionEntities(), tourPackageCombinationToCheck);
+        addOptionEntitiesToList(availableTourPackageEntity.getAvailableFoodOptionEntities(), tourPackageCombinationToCheck);
+        addOptionEntitiesToList(availableTourPackageEntity.getAvailableTransferOptionEntities(), tourPackageCombinationToCheck);
+        addOptionEntitiesToList(availableTourPackageEntity.getAvailableTransportationPackageEntities(), tourPackageCombinationToCheck);
+        addOptionEntitiesToList(availableTourPackageEntity.getAvailableGuideOptionEntities(), tourPackageCombinationToCheck);
+        addOptionEntitiesToList(availableTourPackageEntity.getAvailableSpotEntryOptionEntities(), tourPackageCombinationToCheck);
+
+        return tourPackageCombinationToCheck;
+    }
+
+    private void addOptionEntitiesToList(List<?> optionEntities, List<List<?>> combinationList) {
+        if (optionEntities != null && !optionEntities.isEmpty()) {
+            combinationList.add(optionEntities);
+        }
+    }
+
 }

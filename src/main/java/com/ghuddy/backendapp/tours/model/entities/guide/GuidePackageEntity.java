@@ -21,10 +21,8 @@ public class GuidePackageEntity extends BaseEntity {
     private SubscribedTourEntity subscribedTourEntity;
     @Column(name = "number_of_guide_for_day")
     private Integer numberOfGuideForDay;
-
     @Column(name = "total_guide_price_for_day", precision = 10, scale = 2)
     private BigDecimal totalGuidePriceForDay;
-
     @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = false;

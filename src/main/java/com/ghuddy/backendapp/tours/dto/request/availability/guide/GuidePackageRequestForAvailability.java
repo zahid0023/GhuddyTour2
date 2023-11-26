@@ -11,6 +11,10 @@ public class GuidePackageRequestForAvailability {
     @Schema(description = "The guide package id", required = true, example = "1")
     @JsonProperty("tour_package_guide_package_id")
     private Long guidePackageId;
+
+    @Schema(description = "the day number", required = true, example = "1")
+    @JsonProperty("day_number")
+    private Integer dayNumber;
     @Schema(description = "The guide package price", required = true, example = "1000")
     @JsonProperty("tour_package_guide_package_price")
     private BigDecimal guidePackagePrice;
