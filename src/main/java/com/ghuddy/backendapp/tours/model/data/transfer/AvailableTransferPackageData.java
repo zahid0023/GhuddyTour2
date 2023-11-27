@@ -10,10 +10,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class AvailabilityGeneratedTransferPackageData {
-    @Schema(description = "The id of the transfer package")
-    @JsonProperty("tour_package_transfer_package_id")
-    private Long transferPackageId;
+public class AvailableTransferPackageData {
     @Schema(description = "The route where the transfer service will be provided")
     @JsonProperty("tour_package_transfer_route")
     private String transferRoute;
@@ -35,24 +32,14 @@ public class AvailabilityGeneratedTransferPackageData {
     @Schema(description = "maximum number of travellers in a vehicle")
     @JsonProperty("suitable_for_persons")
     private Integer suitableForPersons;
-
-    private AvailabilityGeneratedTransferPackageData(TransferPackageData transferPackageData){
-        this.transferPackageId = transferPackageData.getTransferPackageId();
-        this.transferRoute = transferPackageData.getTransferRoute();
-        this.transportationModeName = transferPackageData.getTransportationModeName();
-        this.transportationProviderName = transferPackageData.getTransportationProviderName();
-        this.isAc = transferPackageData.getIsAc();
-        this.tripType = transferPackageData.getTripType();
-        this.suitableForPersons = transferPackageData.getSuitableForPersons();
-    }
-
-    public AvailabilityGeneratedTransferPackageData(AvailableTransferPackageEntity availableTransferPackageEntity){
-        this(new TransferPackageData(availableTransferPackageEntity.getTransferPackageEntity()));
+    public AvailableTransferPackageData(AvailableTransferPackageEntity availableTransferPackageEntity){
+        TransferPackageEntity transferPackageEntity = availableTransferPackageEntity.getTransferPackageEntity();
+        this.transferRoute = transferPackageEntity.getTransferRoute();
+        this.transportationModeName = transferPackageEntity.getTransportationModeEntity().getModeName();
+        this.transportationProviderName = transferPackageEntity.getTransportationProviderEntity().getTransportationProviderName();
+        this.isAc = transferPackageEntity.getIsAc();
+        this.tripType = transferPackageEntity.getTripType();
         this.unitPrice = availableTransferPackageEntity.getPerVehiclePerTripPrice();
-    }
-
-    public AvailabilityGeneratedTransferPackageData(TransferPackageEntity transferPackageEntity){
-        this(new TransferPackageData(transferPackageEntity));
-        this.unitPrice = transferPackageEntity.getUnitPrice();
+        this.suitableForPersons = transferPackageEntity.getSuitableForPersons();
     }
 }

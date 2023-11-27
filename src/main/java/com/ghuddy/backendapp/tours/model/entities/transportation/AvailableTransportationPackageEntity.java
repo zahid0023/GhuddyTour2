@@ -1,7 +1,7 @@
 package com.ghuddy.backendapp.tours.model.entities.transportation;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
-import com.ghuddy.backendapp.tours.model.entities.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import lombok.Getter;
 import lombok.Setter;

@@ -14,11 +14,6 @@ public class FoodOptionRequestForAvailability extends OptionRequest {
     @JsonProperty("day_number")
     private Integer dayNumber;
 
-    @Schema(
-            description = "The meal packages belonging to this option",
-            required = true,
-            example = "{ \"1\": [1, 2], \"2\": [3, 4], \"3\": [5, 7] }"
-    )
     @JsonProperty("tour_package_meal_type_wise_meal_packages")
-    private HashMap<Integer, List<Long>> mealTypeWiseMealPackages;
+    private HashMap<Integer, List<MealPackageRequestForAvailability>> mealTypeWiseMealPackages;
 }

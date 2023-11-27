@@ -1,7 +1,7 @@
 package com.ghuddy.backendapp.tours.model.entities.food;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
-import com.ghuddy.backendapp.tours.model.entities.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class AvailableFoodOptionEntity extends BaseEntity {
     private List<AvailableMealPackageEntity> availabilityGeneratedMealPackageEntities = new ArrayList<>();
     @NotNull
     @Column(name = "total_option_price_per_person", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalOptionPricePerPerson = BigDecimal.ZERO;
+    private BigDecimal totalOptionPricePerPerson;
     @NotNull
     @Column(name = "is_active",nullable = false)
     private Boolean isActive = true;

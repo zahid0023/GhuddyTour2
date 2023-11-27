@@ -1,4 +1,4 @@
-package com.ghuddy.backendapp.tours.model.entities;
+package com.ghuddy.backendapp.tours.model.entities.combination;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;

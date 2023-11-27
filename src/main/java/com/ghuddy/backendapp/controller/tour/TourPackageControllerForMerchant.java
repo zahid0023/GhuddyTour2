@@ -6,10 +6,7 @@ import com.ghuddy.backendapp.tours.service.TourPackageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -39,5 +36,11 @@ public class TourPackageControllerForMerchant {
             log.error(ex.toString());
             return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode(), requestId), HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @RequestMapping(value = "/tour-package/options/combination/get/by/{available-tour-package-id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableTourPackageOptionsCombinations(@PathVariable("available-tour-package-id") Long availableTourPackageId, @RequestParam String requestId){
+        return new ResponseEntity<>(tourPackageService.getAllOptionsCombinations(availableTourPackageId,requestId),HttpStatus.OK);
     }
 }

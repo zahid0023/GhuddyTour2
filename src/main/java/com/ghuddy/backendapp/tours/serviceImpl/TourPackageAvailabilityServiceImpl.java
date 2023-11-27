@@ -2,13 +2,16 @@ package com.ghuddy.backendapp.tours.serviceImpl;
 
 import com.ghuddy.backendapp.tours.dto.request.availability.accommodation.AccommodationOptionRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.food.FoodOptionRequestForAvailability;
+import com.ghuddy.backendapp.tours.dto.request.availability.food.MealPackageRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.guide.GuideOptionRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.spot.entry.SpotEntryOptionRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.tourpackage.TourPackageAvailabilitySetRequest;
 import com.ghuddy.backendapp.tours.dto.request.availability.transfer.TransferOptionRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.transportation.TransportationPackageRequestForAvailability;
+import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeResponse;
 import com.ghuddy.backendapp.tours.model.data.OptionPriceData;
-import com.ghuddy.backendapp.tours.model.entities.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.data.tourpackage.AvailableTourPackageData;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AccommodationPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationPackageEntity;
@@ -37,7 +40,6 @@ import com.ghuddy.backendapp.tours.utils.CombinationGenerator;
 import com.ghuddy.backendapp.tours.utils.OptionPriceCalculator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -83,12 +85,14 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
     }
 
     @Override
-    public void generateTourPackageAvailabilityOptions(SubscribedTourEntity subscribedTourEntity, TourPackageAvailabilitySetRequest tourPackageAvailabilitySetRequest) {
+    public InsertAcknowledgeResponse generateTourPackageAvailabilityOptions(SubscribedTourEntity subscribedTourEntity, TourPackageAvailabilitySetRequest tourPackageAvailabilitySetRequest) {
         AvailableTourPackageEntity availableTourPackageEntity = prepareAvailableTourPackageEntity(subscribedTourEntity, tourPackageAvailabilitySetRequest);
         availableTourPackageEntity.setStatus("DRAFT");
         availableTourPackageEntity.setAvailableComponentsInclusiveOptionEntities(inclusiveComponentsCombinations(availableTourPackageEntity));
         availableTourPackageEntity.setAvailableComponentsAllOptionsCombinationEntities(allComponentsCombinations(availableTourPackageEntity));
         availableTourPackageEntity = availableTourPackageRepository.save(availableTourPackageEntity);
+        AvailableTourPackageData availableTourPackageData = new AvailableTourPackageData(availableTourPackageEntity);
+        return new InsertAcknowledgeResponse(availableTourPackageData, tourPackageAvailabilitySetRequest.getRequestId());
     }
 
     private AvailableTourPackageEntity prepareAvailableTourPackageEntity(SubscribedTourEntity subscribedTourEntity, TourPackageAvailabilitySetRequest tourPackageAvailabilitySetRequest) {
@@ -171,8 +175,6 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                 availableAccommodationPackageEntity.setAccommodationPackageEntity(accommodationPackageEntity);
                                 availableAccommodationPackageEntity.setAccommodationPackagePrice(accommodationPackageRequestForAvailability.getPerNightRoomPrice());
                                 availableAccommodationPackageEntity.setNightNumber(accommodationPackageRequestForAvailability.getNightNumber());
-
-                                BigDecimal perPersonAccommodationPackagePrice = accommodationPackageRequestForAvailability.getPerNightRoomPrice().divideToIntegralValue(BigDecimal.valueOf(accommodationPackageEntity.getSuitableForPersons()));
                                 availableAccommodationPackageEntity.setAvailableAccommodationOptionEntity(availableAccommodationOptionEntity);
                                 return availableAccommodationPackageEntity;
                             })
@@ -191,7 +193,9 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
         Set<Long> mealPackageIds = foodOptions.stream()
                 .flatMap(foodOptionRequest ->
                         foodOptionRequest.getMealTypeWiseMealPackages().values().stream()
-                                .flatMap(List::stream))
+                                .flatMap(List::stream)
+                                .map(MealPackageRequestForAvailability::getMealPackageId)
+                )
                 .collect(Collectors.toSet());
 
         Map<Long, MealPackageEntity> mealPackageEntityMap = foodService.getMealPackageEntitiesByIds(mealPackageIds);
@@ -203,10 +207,12 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                     foodOptionRequestForAvailability.getMealTypeWiseMealPackages().entrySet().stream()
                             .forEach(integerListEntry -> {
                                 List<AvailableMealPackageEntity> availableMealPackageEntityList = integerListEntry.getValue().stream()
-                                        .map(mealPackageId -> {
+                                        .map(mealPackageRequest -> {
                                             AvailableMealPackageEntity availableMealPackageEntity = new AvailableMealPackageEntity();
-                                            availableMealPackageEntity.setMealPackageEntity(mealPackageEntityMap.get(mealPackageId));
+                                            availableMealPackageEntity.setMealPackageEntity(mealPackageEntityMap.get(mealPackageRequest.getMealPackageId()));
                                             availableMealPackageEntity.setMealPackageAvailableInDay(foodOptionRequestForAvailability.getDayNumber());
+                                            availableMealPackageEntity.setMealPackagePrice(mealPackageRequest.getMealPackagePrice()); // Set the mealPackagePrice
+                                            log.info(availableMealPackageEntity.getMealPackagePrice().toString());
                                             return availableMealPackageEntity;
                                         })
                                         .toList();
@@ -216,14 +222,18 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                     combinations.forEach(combination -> {
                         AvailableFoodOptionEntity availableFoodOptionEntity = new AvailableFoodOptionEntity();
                         List<AvailableMealPackageEntity> availableMealPackageEntityList = (List<AvailableMealPackageEntity>) combination;
-                        availableMealPackageEntityList = availableMealPackageEntityList.stream().peek(availableMealPackageEntity -> availableMealPackageEntity.setAvailableFoodOptionEntity(availableFoodOptionEntity)).toList();
+                        availableMealPackageEntityList = availableMealPackageEntityList.stream()
+                                .peek(availableMealPackageEntity -> availableMealPackageEntity.setAvailableFoodOptionEntity(availableFoodOptionEntity))
+                                .toList();
                         availableFoodOptionEntity.setAvailabilityGeneratedMealPackageEntities(availableMealPackageEntityList);
                         availableFoodOptionEntity.setAvailableTourPackageEntity(availableTourPackageEntity);
                         BigDecimal optionPricePerPerson = tourPackagePriceService.perPersonFoodOptionPrice(availableFoodOptionEntity);
                         availableFoodOptionEntity.setTotalOptionPricePerPerson(optionPricePerPerson);
+                        log.info(availableFoodOptionEntity.getTotalOptionPricePerPerson().toString());
                         availableFoodOptionEntityList.add(availableFoodOptionEntity);
                     });
                 });
+
         return availableFoodOptionEntityList;
     }
 

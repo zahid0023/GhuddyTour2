@@ -17,21 +17,28 @@ import org.springframework.web.bind.annotation.*;
 public class TourPackageAvailabilityControllerForMerchant {
     private final TourPackageAvailabilityService tourPackageAvailabilityService;
     private final TourSubscriptionService tourSubscriptionService;
+    private final TourPackageService tourPackageService;
 
     public TourPackageAvailabilityControllerForMerchant(TourPackageAvailabilityService tourPackageAvailabilityService,
-                                                        TourSubscriptionService tourSubscriptionService) {
+                                                        TourSubscriptionService tourSubscriptionService,
+                                                        TourPackageService tourPackageService) {
         this.tourPackageAvailabilityService = tourPackageAvailabilityService;
         this.tourSubscriptionService = tourSubscriptionService;
+        this.tourPackageService = tourPackageService;
     }
 
     @RequestMapping(value = "/tour-package/availability/set", method = RequestMethod.POST)
     public ResponseEntity<?> setTourPackageAvailability(@RequestBody TourPackageAvailabilitySetRequest tourPackageAvailabilitySetRequest) {
         try {
             SubscribedTourEntity subscribedTourEntity = tourSubscriptionService.getSubscribedTourEntityById(tourPackageAvailabilitySetRequest.getSubscribedTourId());
-            tourPackageAvailabilityService.generateTourPackageAvailabilityOptions(subscribedTourEntity, tourPackageAvailabilitySetRequest);
-            return null;
+            return new ResponseEntity<>(tourPackageAvailabilityService.generateTourPackageAvailabilityOptions(subscribedTourEntity, tourPackageAvailabilitySetRequest), HttpStatus.CREATED);
         } catch (TourNotFoundException ex) {
             return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode(), tourPackageAvailabilitySetRequest.getRequestId()), HttpStatus.NOT_FOUND);
         }
     }
+
+    public ResponseEntity<?> getAvailableTourPackageById(){
+        return null;
+    }
+
 }

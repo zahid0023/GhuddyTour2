@@ -3,8 +3,10 @@ package com.ghuddy.backendapp.tours.service;
 import com.ghuddy.backendapp.tours.dto.request.tourpackage.TourPackageTypeRequest;
 import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeListResponse;
 import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeResponse;
+import com.ghuddy.backendapp.tours.dto.response.tourpackage.AllComponentsOptionCombinationListResponse;
 import com.ghuddy.backendapp.tours.dto.response.tourpackage.TourPackageTypeListResponse;
 import com.ghuddy.backendapp.tours.exception.EmptyListException;
+import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.TourPackageTypeEntity;
 
 import java.util.List;
@@ -24,4 +26,8 @@ public interface TourPackageService {
     TourPackageTypeListResponse getAllTourPackageTypes() throws EmptyListException;
 
     TourPackageTypeListResponse getAllTourPackageTypesPaginated(Integer pageSize, Integer pageNumber) throws EmptyListException;
+
+    AvailableTourPackageEntity getAvailableTourPackageEntityById(Long availableTourPackageId);
+
+    AllComponentsOptionCombinationListResponse getAllOptionsCombinations(Long availableTourPackageId, String requestId);
 }

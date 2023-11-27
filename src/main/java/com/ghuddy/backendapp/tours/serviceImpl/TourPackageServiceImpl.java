@@ -3,11 +3,16 @@ package com.ghuddy.backendapp.tours.serviceImpl;
 import com.ghuddy.backendapp.tours.dto.request.tourpackage.TourPackageTypeRequest;
 import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeListResponse;
 import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeResponse;
+import com.ghuddy.backendapp.tours.dto.response.tourpackage.AllComponentsOptionCombinationListResponse;
 import com.ghuddy.backendapp.tours.dto.response.tourpackage.TourPackageTypeListResponse;
 import com.ghuddy.backendapp.tours.enums.ErrorCode;
 import com.ghuddy.backendapp.tours.exception.EmptyListException;
+import com.ghuddy.backendapp.tours.model.data.tourpackage.AllComponentCombinationOptionData;
+import com.ghuddy.backendapp.tours.model.data.tourpackage.InclusiveComponentOptionCombinationData;
 import com.ghuddy.backendapp.tours.model.data.tourpackage.TourPackageTypeData;
+import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.TourPackageTypeEntity;
+import com.ghuddy.backendapp.tours.repository.AvailableTourPackageRepository;
 import com.ghuddy.backendapp.tours.repository.TourPackageTypeRepository;
 import com.ghuddy.backendapp.tours.service.*;
 import com.ghuddy.backendapp.tours.utils.EntityUtil;
@@ -24,9 +29,12 @@ import java.util.stream.Collectors;
 @Service
 public class TourPackageServiceImpl implements TourPackageService {
     private final TourPackageTypeRepository tourPackageTypeRepository;
+    private final AvailableTourPackageRepository availableTourPackageRepository;
 
-    public TourPackageServiceImpl(TourPackageTypeRepository tourPackageTypeRepository) {
+    public TourPackageServiceImpl(TourPackageTypeRepository tourPackageTypeRepository,
+                                  AvailableTourPackageRepository availableTourPackageRepository) {
         this.tourPackageTypeRepository = tourPackageTypeRepository;
+        this.availableTourPackageRepository = availableTourPackageRepository;
     }
 
     // tour package type
@@ -86,5 +94,22 @@ public class TourPackageServiceImpl implements TourPackageService {
     @Override
     public Map<Long, TourPackageTypeEntity> getTourPackageTypeEntitiesByPackageTypeIDs(Set<Long> tourPackageTypeIDs) {
         return EntityUtil.findEntitiesByIds(tourPackageTypeIDs, tourPackageTypeRepository, TourPackageTypeEntity::getId, "TourPackageTypeEntity");
+    }
+
+    @Override
+    public AvailableTourPackageEntity getAvailableTourPackageEntityById(Long availableTourPackageId) {
+        return availableTourPackageRepository.findById(availableTourPackageId).orElseThrow(()->new EntityNotFoundException("Entity Not Found"));
+    }
+
+    @Override
+    public AllComponentsOptionCombinationListResponse getAllOptionsCombinations(Long availableTourPackageId, String requestId) {
+        AvailableTourPackageEntity availableTourPackageEntity = getAvailableTourPackageEntityById(availableTourPackageId);
+        List<InclusiveComponentOptionCombinationData> inclusiveComponentOptionCombinationDataList = availableTourPackageEntity.getAvailableComponentsInclusiveOptionEntities().stream()
+                .map(availableComponentsInclusiveOptionsCombinationEntity -> new InclusiveComponentOptionCombinationData(availableComponentsInclusiveOptionsCombinationEntity))
+                .toList();
+        List<AllComponentCombinationOptionData> allComponentCombinationOptionDataList = availableTourPackageEntity.getAvailableComponentsAllOptionsCombinationEntities().stream()
+                .map(availableComponentsAllOptionsCombinationEntity -> new AllComponentCombinationOptionData(availableComponentsAllOptionsCombinationEntity))
+                .toList();
+        return new AllComponentsOptionCombinationListResponse(inclusiveComponentOptionCombinationDataList,allComponentCombinationOptionDataList,requestId);
     }
 }
