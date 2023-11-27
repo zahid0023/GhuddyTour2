@@ -58,6 +58,7 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
     private final TransportationService transportationService;
     private final SpotEntryService spotEntryService;
     private final GuideService guideService;
+    private final TourPackagePriceService tourPackagePriceService;
 
     public TourPackageAvailabilityServiceImpl(AvailabilityGeneratedTourPackageRepository availabilityGeneratedTourPackageRepository,
                                               AccommodationService accommodationService,
@@ -67,7 +68,8 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                               TourPackageService tourPackageService,
                                               SpotEntryService spotEntryService,
                                               AvailableTourPackageRepository availableTourPackageRepository,
-                                              GuideService guideService) {
+                                              GuideService guideService,
+                                              TourPackagePriceService tourPackagePriceService) {
         this.availabilityGeneratedTourPackageRepository = availabilityGeneratedTourPackageRepository;
         this.accommodationService = accommodationService;
         this.foodService = foodService;
@@ -77,6 +79,7 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
         this.spotEntryService = spotEntryService;
         this.availableTourPackageRepository = availableTourPackageRepository;
         this.guideService = guideService;
+        this.tourPackagePriceService = tourPackagePriceService;
     }
 
     @Override
@@ -154,8 +157,6 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                 .map(accommodationPackageRequestForAvailability -> accommodationPackageRequestForAvailability.getAccommodationPackageId())
                 )
                 .collect(Collectors.toSet());
-        log.info(accommodationOptionRequestForAvailabilityList.toString());
-        log.info(accommodationPackageIds.toString());
         Map<Long, AccommodationPackageEntity> accommodationPackageEntityMap = accommodationService.getAccommodationPackageEntitiesById(accommodationPackageIds);
 
         return accommodationOptionRequestForAvailabilityList.stream()
@@ -173,12 +174,14 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
 
                                 BigDecimal perPersonAccommodationPackagePrice = accommodationPackageRequestForAvailability.getPerNightRoomPrice().divideToIntegralValue(BigDecimal.valueOf(accommodationPackageEntity.getSuitableForPersons()));
                                 availableAccommodationPackageEntity.setAvailableAccommodationOptionEntity(availableAccommodationOptionEntity);
-                                availableAccommodationOptionEntity.setTotalOptionPricePerPerson(availableAccommodationOptionEntity.getTotalOptionPricePerPerson().add(perPersonAccommodationPackagePrice));
-
                                 return availableAccommodationPackageEntity;
                             })
                             .toList();
                     availableAccommodationOptionEntity.setAvailableAccommodationPackageEntityList(availabilityGeneratedAccommodationPackageEntityList);
+
+                    BigDecimal optionPricePerPerson = tourPackagePriceService.perPersonAccommodationOptionPrice(availableAccommodationOptionEntity, availableTourPackageEntity.getTourPackageTypeEntity().getSuitableFor());
+                    availableAccommodationOptionEntity.setTotalOptionPricePerPerson(optionPricePerPerson);
+
                     return availableAccommodationOptionEntity;
                 })
                 .collect(Collectors.toList());
@@ -216,6 +219,8 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                         availableMealPackageEntityList = availableMealPackageEntityList.stream().peek(availableMealPackageEntity -> availableMealPackageEntity.setAvailableFoodOptionEntity(availableFoodOptionEntity)).toList();
                         availableFoodOptionEntity.setAvailabilityGeneratedMealPackageEntities(availableMealPackageEntityList);
                         availableFoodOptionEntity.setAvailableTourPackageEntity(availableTourPackageEntity);
+                        BigDecimal optionPricePerPerson = tourPackagePriceService.perPersonFoodOptionPrice(availableFoodOptionEntity);
+                        availableFoodOptionEntity.setTotalOptionPricePerPerson(optionPricePerPerson);
                         availableFoodOptionEntityList.add(availableFoodOptionEntity);
                     });
                 });
@@ -243,16 +248,14 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                 availableTransferPackageEntity.setAvailableTransferOptionEntity(availableTransferOptionEntity);
                                 TransferPackageEntity transferPackageEntity = transferPackageEntityMap.get(transferPackageRequestForAvailability.getTransferPackageId());
                                 availableTransferPackageEntity.setTransferPackageEntity(transferPackageEntity);
-                                int numberOfTravellers = availableTourPackageEntity.getTourPackageTypeEntity().getSuitableFor();
-                                int suitableForPersons = transferPackageEntity.getSuitableForPersons();
                                 BigDecimal perVehiclePerTripPrice = transferPackageRequestForAvailability.getPerVehiclePerTripPrice();
-                                BigDecimal perPersonTransferPackagePrice = perVehiclePerTripPrice.divideToIntegralValue(BigDecimal.valueOf(suitableForPersons > numberOfTravellers ? numberOfTravellers : suitableForPersons));
                                 availableTransferPackageEntity.setPerVehiclePerTripPrice(perVehiclePerTripPrice);
-                                availableTransferOptionEntity.setTotalOptionPricePerPerson(availableTransferOptionEntity.getTotalOptionPricePerPerson().add(perPersonTransferPackagePrice));
                                 return availableTransferPackageEntity;
                             })
                             .toList();
                     availableTransferOptionEntity.setAvailableTransferPackageEntityList(availableTransferPackageEntityList);
+                    BigDecimal optionPricePerPerson = tourPackagePriceService.perPersonTransferOptionPrice(availableTransferOptionEntity, availableTourPackageEntity.getTourPackageTypeEntity().getSuitableFor());
+                    availableTransferOptionEntity.setTotalOptionPricePerPerson(optionPricePerPerson);
                     return availableTransferOptionEntity;
                 })
                 .collect(Collectors.toList());
@@ -298,11 +301,12 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                 availableSpotEntryPackageEntity.setSpotEntryPackageEntity(spotEntryPackageEntity);
                                 BigDecimal perPersonSpotEntryPackagePrice = spotEntryPackageRequestForAvailability.getSpotEntryPrice();
                                 availableSpotEntryPackageEntity.setSpotEntryPricePerPerson(perPersonSpotEntryPackagePrice);
-                                availableSpotEntryOptionEntity.setTotalOptionPricePerPerson(availableSpotEntryOptionEntity.getTotalOptionPricePerPerson().add(perPersonSpotEntryPackagePrice));
                                 return availableSpotEntryPackageEntity;
                             })
                             .toList();
                     availableSpotEntryOptionEntity.setAvailableSpotEntryPackageEntityList(availableSpotEntryPackageEntityList);
+                    BigDecimal optionPricePerPerson = tourPackagePriceService.perPersonSpotEntryOptionPrice(availableSpotEntryOptionEntity);
+                    availableSpotEntryOptionEntity.setTotalOptionPricePerPerson(optionPricePerPerson);
                     return availableSpotEntryOptionEntity;
                 })
                 .collect(Collectors.toList());
@@ -328,13 +332,13 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
                                 availableGuidePackageEntity.setDayNumber(guidePackageRequestForAvailability.getDayNumber());
                                 BigDecimal perGuidePackagePrice = guidePackageRequestForAvailability.getGuidePackagePrice();
                                 availableGuidePackageEntity.setTotalGuidePackagePrice(perGuidePackagePrice);
-                                availableGuideOptionEntity.setTotalOptionPricePerPerson(availableGuideOptionEntity.getTotalOptionPricePerPerson().add(perGuidePackagePrice));
                                 return availableGuidePackageEntity;
                             })
                             .toList();
-                    availableGuideOptionEntity.setAvailableGuidePackageEntityList(availableSpotEntryPackageEntityList);
                     availableGuideOptionEntity.setAvailableTourPackageEntity(availableTourPackageEntity);
-                    log.info(availableGuideOptionEntity.getAvailableTourPackageEntity().toString());
+                    availableGuideOptionEntity.setAvailableGuidePackageEntityList(availableSpotEntryPackageEntityList);
+                    BigDecimal optionPricePerPerson = tourPackagePriceService.perPersonGuideOptionPrice(availableGuideOptionEntity, availableTourPackageEntity.getTourPackageTypeEntity().getSuitableFor());
+                    availableGuideOptionEntity.setTotalOptionPricePerPerson(optionPricePerPerson);
                     return availableGuideOptionEntity;
                 })
                 .collect(Collectors.toList());
