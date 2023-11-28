@@ -25,7 +25,7 @@ public class TourPackageAvailabilitySetRequest extends BaseRequest {
     private Long tourPackageTypeId;
     @Schema(description = "The start date of the tour", required = true, example = "2023-11-14")
     @JsonProperty("tour_start_date")
-    private LocalDate tourStartDate;
+    private LocalDate tourStartDate; // have to be arrays
     @Schema(description = "The total seats available for this tour", required = true, example = "5")
     @JsonProperty("total_seats")
     private Integer totalSeats;

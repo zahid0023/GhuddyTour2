@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Data
-public class FoodOptionRequestForAvailability extends OptionRequest {
+public class FoodOptionRequestForAvailability {
     @Schema(description = "Meal Package available in day", required = true, example = "1")
     @JsonProperty("day_number")
     private Integer dayNumber;

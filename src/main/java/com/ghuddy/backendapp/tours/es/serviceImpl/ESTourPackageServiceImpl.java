@@ -50,34 +50,7 @@ public class ESTourPackageServiceImpl implements ESTourPackageService {
         return esTourPackageDocumentList;
     }
 
-    /**
-     * @param tourEntity
-     * @param requestId
-     * @return
-     */
-    @Override
-    public Boolean indexAvailableTourPackagesOptionsCombinations(TourEntity tourEntity, String requestId) {
-        List<ESTourComponentOptionCombinationDocument> esTourComponentOptionCombinationDocumentList = tourEntity.getSubscribedTourEntities().stream()
-                .flatMap(subscribedTourEntity -> subscribedTourEntity.getAvailableTourPackageEntities().stream()
-                        .flatMap(availableTourPackageEntity -> getAllComponentOptionsCombinations(availableTourPackageEntity).stream()))
-                .collect(Collectors.toList());
-        esTourComponentOptionCombinationRepository.saveAll(esTourComponentOptionCombinationDocumentList);
-        return true;
-    }
 
-    private List<ESTourComponentOptionCombinationDocument> getAllComponentOptionsCombinations(AvailableTourPackageEntity availableTourPackageEntity) {
-        List<ESTourComponentOptionCombinationDocument> allOptions = availableTourPackageEntity.getAvailableComponentsAllOptionsCombinationEntities().stream()
-                .map(availableComponentsAllOptionsCombinationEntity -> new ESTourComponentOptionCombinationDocument(availableComponentsAllOptionsCombinationEntity))
-                .collect(Collectors.toList());
-        log.info(allOptions.toString());
-        List<ESTourComponentOptionCombinationDocument> inclusiveOptions = availableTourPackageEntity.getAvailableComponentsInclusiveOptionEntities().stream()
-                .map(inclusiveOptionsCombinationEntity -> new ESTourComponentOptionCombinationDocument(inclusiveOptionsCombinationEntity))
-                .collect(Collectors.toList());
-        log.info(inclusiveOptions.toString());
-
-        allOptions.addAll(inclusiveOptions);
-        return allOptions.stream().distinct().toList();
-    }
 
     /**
      * @param tourId

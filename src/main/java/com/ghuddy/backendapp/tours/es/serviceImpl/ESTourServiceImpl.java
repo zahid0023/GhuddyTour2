@@ -5,6 +5,7 @@ import com.ghuddy.backendapp.tours.es.dto.response.ESTourResponse;
 import com.ghuddy.backendapp.tours.es.model.data.ESTourData;
 import com.ghuddy.backendapp.tours.es.model.entities.ESTourDocument;
 import com.ghuddy.backendapp.tours.es.repository.ESTourDetailsRepository;
+import com.ghuddy.backendapp.tours.es.service.ESOptionsCombinationService;
 import com.ghuddy.backendapp.tours.es.service.ESTourPackageService;
 import com.ghuddy.backendapp.tours.es.service.ESTourService;
 import com.ghuddy.backendapp.tours.exception.TourNotFoundException;
@@ -19,15 +20,18 @@ public class ESTourServiceImpl implements ESTourService {
     private final TourService tourService;
     private final ESTourDetailsRepository esTourDetailsRepository;
     private final ESTourPackageService esTourPackageService;
+    private final ESOptionsCombinationService esOptionsCombinationService;
 
     public ESTourServiceImpl(TourSubscriptionService tourSubscriptionService,
                              TourService tourService,
                              ESTourDetailsRepository esTourDetailsRepository,
-                             ESTourPackageService esTourPackageService) {
+                             ESTourPackageService esTourPackageService,
+                             ESOptionsCombinationService esOptionsCombinationService) {
         this.tourSubscriptionService = tourSubscriptionService;
         this.tourService = tourService;
         this.esTourDetailsRepository = esTourDetailsRepository;
         this.esTourPackageService = esTourPackageService;
+        this.esOptionsCombinationService = esOptionsCombinationService;
     }
 
 
@@ -42,7 +46,7 @@ public class ESTourServiceImpl implements ESTourService {
         ESTourDocument esTourDocument = new ESTourDocument(tourEntity);
         esTourDetailsRepository.save(esTourDocument);
         esTourPackageService.indexAvailableTourPackages(tourEntity, requestId);
-        esTourPackageService.indexAvailableTourPackagesOptionsCombinations(tourEntity, requestId);
+        esOptionsCombinationService.indexOptionsCombinations(tourEntity,requestId);
         return true;
     }
 

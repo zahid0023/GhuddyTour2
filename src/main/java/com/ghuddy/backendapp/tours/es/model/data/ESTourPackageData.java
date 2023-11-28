@@ -1,8 +1,8 @@
 package com.ghuddy.backendapp.tours.es.model.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ghuddy.backendapp.tours.es.dto.data.DefaultOptionCombinationData;
 import com.ghuddy.backendapp.tours.es.model.entities.*;
-import com.ghuddy.backendapp.tours.model.entities.food.AvailableFoodOptionEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -55,18 +55,8 @@ public class ESTourPackageData {
     @JsonProperty("tour_package_available_itinerary")
     private List<ESSubscribedTourItineraryData> esSubscribedTourItineraryDataList;
 
-    @JsonProperty("tour_package_default_accommodation_option_id")
-    private Long defaultAccommodationOptionId;
-    @JsonProperty("tour_package_default_food_option_id")
-    private Long defaultFoodOptionId;
-    @JsonProperty("tour_package_default_transfer_option_id")
-    private Long defaultTransferOptionId;
-    @JsonProperty("tour_package_default_transportation_package_id")
-    private Long defaultTransportationPackageId;
-    @JsonProperty("tour_package_default_guide_option_id")
-    private Long defaultGuideOptionId;
-    @JsonProperty("tour_package_default_spot_entry_option_id")
-    private Long defaultSpotEntryOptionId;
+    @JsonProperty("tour_package_default_options")
+    private DefaultOptionCombinationData defaultOptionCombinationData;
 
     public ESTourPackageData(ESTourPackageDocument esTourPackageDocument) {
         this.subscribedTourId = esTourPackageDocument.getSubscribedTourId();
@@ -92,19 +82,19 @@ public class ESTourPackageData {
         this.esSpotEntryOptionDataList = getAvailableSpotEntryOptions(esTourPackageDocument.getEsSpotEntryOptionDocumentList());
         this.esSubscribedTourItineraryDataList = getTourItinerary(esTourPackageDocument.getEsSubscribedTourItineraryDocumentList());
 
-
-        this.defaultAccommodationOptionId = isAccommodationInclusive ?
-                esAccommodationOptionDataList.get(0).getAvailableAccommodationOptionId() : 0;
-        this.defaultFoodOptionId = isFoodInclusive ?
-                esFoodOptionDataList.get(0).getAvailableFoodOptionId() : 0;
-        this.defaultTransferOptionId = isTransferInclusive ?
-                esTransferOptionDataList.get(0).getAvailableTransferOptionId() : 0;
-        this.defaultTransportationPackageId = 0L;
-        this.defaultGuideOptionId = isGuideInclusive ?
-                esGuideOptionDataList.get(0).getAvailableGuideOptionId() : 0;
-        this.defaultSpotEntryOptionId = isSpotEntryInclusive ?
-                esSpotEntryOptionDataList.get(0).getAvailableSpotEntryOptionId() : 0;
-
+        this.defaultOptionCombinationData = new DefaultOptionCombinationData(
+                isAccommodationInclusive ?
+                        esAccommodationOptionDataList.get(0).getAvailableAccommodationOptionId() : 0,
+                isFoodInclusive ?
+                        esFoodOptionDataList.get(0).getAvailableFoodOptionId() : 0,
+                isTransferInclusive ?
+                        esTransferOptionDataList.get(0).getAvailableTransferOptionId() : 0,
+                0L,
+                isGuideInclusive ?
+                        esGuideOptionDataList.get(0).getAvailableGuideOptionId() : 0,
+                isSpotEntryInclusive ?
+                        esSpotEntryOptionDataList.get(0).getAvailableSpotEntryOptionId() : 0
+        );
     }
 
     private List<ESAccommodationOptionData> getAvailableAccommodationOptions(List<ESAccommodationOptionDocument> esAccommodationOptionDocumentList) {
@@ -131,13 +121,13 @@ public class ESTourPackageData {
                 .toList();
     }
 
-    private List<ESGuideOptionData> getAvailableGuideOptions(List<ESGuideOptionDocument> esGuideOptionDocumentList){
+    private List<ESGuideOptionData> getAvailableGuideOptions(List<ESGuideOptionDocument> esGuideOptionDocumentList) {
         return esGuideOptionDocumentList.stream()
                 .map(esGuideOptionDocument -> new ESGuideOptionData(esGuideOptionDocument))
                 .toList();
     }
 
-    private List<ESSpotEntryOptionData> getAvailableSpotEntryOptions(List<ESSpotEntryOptionDocument> esSpotEntryOptionDocumentList){
+    private List<ESSpotEntryOptionData> getAvailableSpotEntryOptions(List<ESSpotEntryOptionDocument> esSpotEntryOptionDocumentList) {
         return esSpotEntryOptionDocumentList.stream()
                 .map(esSpotEntryOptionDocument -> new ESSpotEntryOptionData(esSpotEntryOptionDocument))
                 .toList();

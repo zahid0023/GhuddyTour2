@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TransferOptionRequestForAvailability extends OptionRequest {
+public class TransferOptionRequestForAvailability{
     @Schema(description = "The list of transfer packages", required = true)
     @JsonProperty("tour_package_transfer_packages")
     private List<TransferPackageRequestForAvailability> transferPackageRequestForAvailabilityList;

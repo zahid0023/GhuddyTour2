@@ -1,7 +1,12 @@
 package com.ghuddy.backendapp.tours.es.dto.response;
 
-import lombok.Data;
+import com.ghuddy.backendapp.dto.response.BaseResponse;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class ESBillCalculationResponse {
+@Getter
+@Setter
+@NoArgsConstructor
+public class ESBillCalculationResponse extends BaseResponse {
 }

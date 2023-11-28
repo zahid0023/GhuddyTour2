@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class GuideOptionRequestForAvailability extends OptionRequest {
+public class GuideOptionRequestForAvailability {
     @Schema(description = "The guide package packages",required = true)
     @JsonProperty("tour_package_guide_packages")
     private List<GuidePackageRequestForAvailability> guidePackageRequestForAvailabilityList;

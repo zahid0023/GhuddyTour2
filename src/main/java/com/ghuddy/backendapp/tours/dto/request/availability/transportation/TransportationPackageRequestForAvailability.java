@@ -8,7 +8,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class TransportationPackageRequestForAvailability extends OptionRequest {
+public class TransportationPackageRequestForAvailability {
     @Schema(description = "The transportation package id", required = true, example = "1")
     @JsonProperty("tour_package_transportation_package_id")
     private Long transportationPackageId;

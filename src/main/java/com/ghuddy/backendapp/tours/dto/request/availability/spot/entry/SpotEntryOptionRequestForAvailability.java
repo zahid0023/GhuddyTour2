@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SpotEntryOptionRequestForAvailability extends OptionRequest {
+public class SpotEntryOptionRequestForAvailability {
     @Schema(description = "The spot entry options belonging to this available tour package", required = true)
     @JsonProperty("tour_package_spot_entry_packages")
     private List<SpotEntryPackageRequestForAvailability> spotEntryPackageRequestForAvailabilityList;

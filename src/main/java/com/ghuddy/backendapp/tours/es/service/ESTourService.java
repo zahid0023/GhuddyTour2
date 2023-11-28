@@ -11,5 +11,4 @@ public interface ESTourService {
 
     ESTourDocument getTourById(Long tourId, String requestId) throws TourNotFoundException;
 
-
 }
