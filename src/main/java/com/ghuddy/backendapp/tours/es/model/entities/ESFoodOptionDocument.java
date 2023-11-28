@@ -3,12 +3,17 @@ package com.ghuddy.backendapp.tours.es.model.entities;
 import com.ghuddy.backendapp.tours.es.model.data.ESAccommodationPackageData;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableFoodOptionEntity;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class ESFoodOptionDocument {
     @Field(name = "tour_package_available_food_option_id", type = FieldType.Long)
     private Long availableFoodOptionId;

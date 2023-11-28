@@ -37,8 +37,4 @@ public class TourPackageAvailabilityControllerForMerchant {
         }
     }
 
-    public ResponseEntity<?> getAvailableTourPackageById(){
-        return null;
-    }
-
 }

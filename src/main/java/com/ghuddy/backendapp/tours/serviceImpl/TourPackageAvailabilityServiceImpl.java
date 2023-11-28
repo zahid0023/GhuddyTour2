@@ -9,8 +9,11 @@ import com.ghuddy.backendapp.tours.dto.request.availability.tourpackage.TourPack
 import com.ghuddy.backendapp.tours.dto.request.availability.transfer.TransferOptionRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.request.availability.transportation.TransportationPackageRequestForAvailability;
 import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeResponse;
+import com.ghuddy.backendapp.tours.dto.response.tourpackage.AllComponentsOptionCombinationListResponse;
 import com.ghuddy.backendapp.tours.model.data.OptionPriceData;
+import com.ghuddy.backendapp.tours.model.data.tourpackage.AllComponentCombinationOptionData;
 import com.ghuddy.backendapp.tours.model.data.tourpackage.AvailableTourPackageData;
+import com.ghuddy.backendapp.tours.model.data.tourpackage.InclusiveComponentOptionCombinationData;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AccommodationPackageEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;
@@ -544,5 +547,4 @@ public class TourPackageAvailabilityServiceImpl implements TourPackageAvailabili
             combinationList.add(optionEntities);
         }
     }
-
 }

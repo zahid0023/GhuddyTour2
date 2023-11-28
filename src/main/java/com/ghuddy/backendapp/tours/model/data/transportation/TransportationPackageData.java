@@ -49,10 +49,6 @@ public class TransportationPackageData {
     @JsonProperty("transportation_package_unit_price")
     private BigDecimal unitPrice;
 
-    @Schema(description = "Whether is active")
-    @JsonProperty("transportation_package_is_active")
-    private Boolean isActive;
-
     public TransportationPackageData(TransportationPackageEntity transportationPackageEntity) {
         this.transportationPackageId = transportationPackageEntity.getId();
         this.transportationRouteId = transportationPackageEntity.getTransportationRouteEntity().getId();

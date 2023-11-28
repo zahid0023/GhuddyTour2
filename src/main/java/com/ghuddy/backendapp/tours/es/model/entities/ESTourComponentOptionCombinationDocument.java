@@ -3,12 +3,14 @@ package com.ghuddy.backendapp.tours.es.model.entities;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import lombok.Data;
+import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import javax.persistence.GeneratedValue;
 import java.math.BigDecimal;
 
 @Data
@@ -16,8 +18,8 @@ import java.math.BigDecimal;
 @Document(indexName = "available_tour_package_component_options_combination")
 public class ESTourComponentOptionCombinationDocument {
     @Id
-    @Field(name = "option_combination_id")
-    private Long optionCombinationId;
+    @GeneratedValue
+    private Long id;
     @Field(name = "available_tour_package_id", type = FieldType.Long)
     private Long availableTourPackageId;
     @Field(name = "accommodation_option_id", type = FieldType.Long)
@@ -38,7 +40,6 @@ public class ESTourComponentOptionCombinationDocument {
     private BigDecimal ghuddyWebsiteRedPrice;
 
     public ESTourComponentOptionCombinationDocument(AvailableComponentsInclusiveOptionsCombinationEntity availableComponentsInclusiveOptionsCombinationEntity) {
-        this.optionCombinationId = availableComponentsInclusiveOptionsCombinationEntity.getId();
         this.availableTourPackageId = availableComponentsInclusiveOptionsCombinationEntity.getAvailableTourPackageEntity() != null
                 ? availableComponentsInclusiveOptionsCombinationEntity.getAvailableTourPackageEntity().getId()
                 : 0;
@@ -65,7 +66,6 @@ public class ESTourComponentOptionCombinationDocument {
 
 
     public ESTourComponentOptionCombinationDocument(AvailableComponentsAllOptionsCombinationEntity availableComponentsAllOptionsCombinationEntity) {
-        this.optionCombinationId = availableComponentsAllOptionsCombinationEntity.getId();
         this.availableTourPackageId = availableComponentsAllOptionsCombinationEntity.getAvailableTourPackageEntity() != null
                 ? availableComponentsAllOptionsCombinationEntity.getAvailableTourPackageEntity().getId()
                 : 0;

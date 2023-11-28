@@ -2,6 +2,8 @@ package com.ghuddy.backendapp.tours.es.model.entities;
 
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableFoodOptionEntity;
+import com.ghuddy.backendapp.tours.model.entities.guide.AvailableGuideOptionEntity;
+import com.ghuddy.backendapp.tours.model.entities.spot.entry.AvailableSpotEntryOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.tour.SubscribedTourEntity;
 import com.ghuddy.backendapp.tours.model.entities.tour.SubscribedTourItineraryEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
@@ -64,6 +66,10 @@ public class ESTourPackageDocument {
     private List<ESTransferOptionDocument> esTransferOptionDocumentList;
     @Field(name = "tour_package_available_transportation_options", type = FieldType.Nested, includeInParent = true)
     private List<ESTransportationPackageDocument> esTransportationPackageDocumentList;
+    @Field(name = "tour_package_available_guide_options", type = FieldType.Nested, includeInParent = true)
+    private List<ESGuideOptionDocument> esGuideOptionDocumentList;
+    @Field(name = "tour_package_available_spot_entry_options", type = FieldType.Nested, includeInParent = true)
+    private List<ESSpotEntryOptionDocument> esSpotEntryOptionDocumentList;
     @Field(name = "tour_package_available_itinerary", type = FieldType.Nested, includeInParent = true)
     private List<ESSubscribedTourItineraryDocument> esSubscribedTourItineraryDocumentList;
 
@@ -90,6 +96,9 @@ public class ESTourPackageDocument {
         this.esFoodOptionDataList = getAvailableFoodOptions(availableTourPackageEntity.getAvailableFoodOptionEntities());
         this.esTransferOptionDocumentList = getAvailableTransferOptions(availableTourPackageEntity.getAvailableTransferOptionEntities());
         this.esTransportationPackageDocumentList = getAvailableTransportationPackages(availableTourPackageEntity.getAvailableTransportationPackageEntities());
+        this.esGuideOptionDocumentList = getAvailableGuideOptions(availableTourPackageEntity.getAvailableGuideOptionEntities());
+        this.esSpotEntryOptionDocumentList = getAvailableSpotEntryOptions(availableTourPackageEntity.getAvailableSpotEntryOptionEntities());
+
         this.esSubscribedTourItineraryDocumentList = getTourItinerary(subscribedTourEntity.getSubscribedTourItineraryEntities());
 
     }
@@ -115,6 +124,18 @@ public class ESTourPackageDocument {
     private List<ESTransportationPackageDocument> getAvailableTransportationPackages(List<AvailableTransportationPackageEntity> availableTransportationPackageEntityList) {
         return availableTransportationPackageEntityList.stream()
                 .map(availableTransportationPackageEntity -> new ESTransportationPackageDocument(availableTransportationPackageEntity))
+                .toList();
+    }
+
+    private List<ESGuideOptionDocument> getAvailableGuideOptions(List<AvailableGuideOptionEntity> availableGuideOptionEntityList){
+        return availableGuideOptionEntityList.stream()
+                .map(availableGuideOptionEntity -> new ESGuideOptionDocument(availableGuideOptionEntity))
+                .toList();
+    }
+
+    private List<ESSpotEntryOptionDocument> getAvailableSpotEntryOptions(List<AvailableSpotEntryOptionEntity>availableSpotEntryOptionEntityList){
+        return availableSpotEntryOptionEntityList.stream()
+                .map(availableSpotEntryOptionEntity -> new ESSpotEntryOptionDocument(availableSpotEntryOptionEntity))
                 .toList();
     }
 

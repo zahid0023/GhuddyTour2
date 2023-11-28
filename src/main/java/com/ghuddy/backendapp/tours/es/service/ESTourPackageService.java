@@ -11,5 +11,7 @@ import java.util.Map;
 
 public interface ESTourPackageService {
     Boolean indexAvailableTourPackages(TourEntity tourEntity, String requestId);
+    Boolean indexAvailableTourPackagesOptionsCombinations(TourEntity tourEntity, String requestId);
+    ESTourPackageResponse getAvailableTourPackagesByTourId(Long tourId, String requestId);
 
 }

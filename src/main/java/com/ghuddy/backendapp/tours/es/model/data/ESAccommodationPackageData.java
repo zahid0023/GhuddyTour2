@@ -47,6 +47,6 @@ public class ESAccommodationPackageData {
         this.suitableForPersons = esAccommodationPackageDocument.getSuitableForPersons();
         this.bedCount = esAccommodationPackageDocument.getBedCount();
         this.bedConfiguration = esAccommodationPackageDocument.getBedConfiguration();
-        this.nightNumber = getNightNumber();
+        this.nightNumber = esAccommodationPackageDocument.getNightNumber();
     }
 }

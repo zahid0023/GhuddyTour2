@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 
 @Data
 public class ESTourComponentCombinationData {
-    @JsonProperty("option_combination_id")
-    private Long optionCombinationId;
     @JsonProperty("available_tour_package_id")
     private Long availableTourPackageId;
     @JsonProperty("accommodation_option_id")
@@ -30,7 +28,6 @@ public class ESTourComponentCombinationData {
     private BigDecimal ghuddyWebsiteRedPrice;
 
     public ESTourComponentCombinationData(ESTourComponentOptionCombinationDocument esTourComponentOptionCombinationDocument){
-        this.optionCombinationId = esTourComponentOptionCombinationDocument.getOptionCombinationId();
         this.availableTourPackageId = esTourComponentOptionCombinationDocument.getAvailableTourPackageId();
         this.accommodationOptionId = esTourComponentOptionCombinationDocument.getAccommodationOptionId();
         this.foodOptionId = esTourComponentOptionCombinationDocument.getFoodOptionId();

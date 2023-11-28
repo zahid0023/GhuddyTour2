@@ -3,12 +3,17 @@ package com.ghuddy.backendapp.tours.es.model.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableMealPackageEntity;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class ESMealPackageDocument {
 
     @Field(name = "meal_type_id", type = FieldType.Long)

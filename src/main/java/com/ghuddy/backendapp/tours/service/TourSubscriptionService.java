@@ -2,6 +2,7 @@ package com.ghuddy.backendapp.tours.service;
 
 import com.ghuddy.backendapp.tours.dto.request.tour.TourSubscriptionRequest;
 import com.ghuddy.backendapp.tours.dto.response.tour.TourSubscriptionResponse;
+import com.ghuddy.backendapp.tours.dto.response.tourpackage.AllComponentsOptionCombinationListResponse;
 import com.ghuddy.backendapp.tours.exception.TourNotFoundException;
 import com.ghuddy.backendapp.tours.model.entities.tour.SubscribedTourEntity;
 

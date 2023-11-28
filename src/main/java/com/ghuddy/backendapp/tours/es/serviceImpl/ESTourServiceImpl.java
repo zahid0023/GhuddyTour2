@@ -42,6 +42,7 @@ public class ESTourServiceImpl implements ESTourService {
         ESTourDocument esTourDocument = new ESTourDocument(tourEntity);
         esTourDetailsRepository.save(esTourDocument);
         esTourPackageService.indexAvailableTourPackages(tourEntity, requestId);
+        esTourPackageService.indexAvailableTourPackagesOptionsCombinations(tourEntity, requestId);
         return true;
     }
 
@@ -53,7 +54,7 @@ public class ESTourServiceImpl implements ESTourService {
      */
     @Override
     public ESTourResponse getTour(Long tourId, String requestId) throws TourNotFoundException {
-        ESTourDocument esTourDocument = getTourById(tourId,requestId);
+        ESTourDocument esTourDocument = getTourById(tourId, requestId);
         ESTourData esTourData = new ESTourData(esTourDocument);
         return new ESTourResponse(esTourData);
     }

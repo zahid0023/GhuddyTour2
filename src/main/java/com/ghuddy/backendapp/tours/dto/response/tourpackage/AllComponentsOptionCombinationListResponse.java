@@ -15,7 +15,7 @@ public class AllComponentsOptionCombinationListResponse extends BaseResponse {
     @JsonProperty("tour_package_all_options")
     private List<AllComponentCombinationOptionData> allComponentCombinationOptionDataList;
 
-    public AllComponentsOptionCombinationListResponse(List<InclusiveComponentOptionCombinationData> inclusiveComponentOptionCombinationDataList,List<AllComponentCombinationOptionData> allComponentCombinationOptionDataList, String requestId){
+    public AllComponentsOptionCombinationListResponse(List<InclusiveComponentOptionCombinationData> inclusiveComponentOptionCombinationDataList, List<AllComponentCombinationOptionData> allComponentCombinationOptionDataList, String requestId) {
         this.inclusiveComponentOptionCombinationDataList = inclusiveComponentOptionCombinationDataList;
         this.allComponentCombinationOptionDataList = allComponentCombinationOptionDataList;
         this.setRequestId(requestId);
