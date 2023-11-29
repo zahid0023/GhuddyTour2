@@ -104,7 +104,8 @@ public class TourPackageServiceImpl implements TourPackageService {
     @Override
     public AllComponentsOptionCombinationListResponse getAllOptionsCombinations(Long availableTourPackageId, String requestId) {
         AvailableTourPackageEntity availableTourPackageEntity = getAvailableTourPackageEntityById(availableTourPackageId);
-        List<InclusiveComponentOptionCombinationData> inclusiveComponentOptionCombinationDataList = availableTourPackageEntity.getAvailableComponentsInclusiveOptionEntities().stream()
+        List<InclusiveComponentOptionCombinationData> inclusiveComponentOptionCombinationDataList = availableTourPackageEntity.getAvailableComponentsAllOptionsCombinationEntities().stream()
+                .filter(availableComponentsAllOptionsCombinationEntity -> availableComponentsAllOptionsCombinationEntity.getIsInclusiveOptions())
                 .map(availableComponentsInclusiveOptionsCombinationEntity -> new InclusiveComponentOptionCombinationData(availableComponentsInclusiveOptionsCombinationEntity))
                 .toList();
         List<AllComponentCombinationOptionData> allComponentCombinationOptionDataList = availableTourPackageEntity.getAvailableComponentsAllOptionsCombinationEntities().stream()

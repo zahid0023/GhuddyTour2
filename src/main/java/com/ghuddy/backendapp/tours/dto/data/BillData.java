@@ -1,6 +1,8 @@
 package com.ghuddy.backendapp.tours.dto.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,29 +11,21 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class BillData {
+    @JsonProperty("products")
     List<ProductMeta> purchasedProducts;
-    BigDecimal totalAmount;
-    BigDecimal totalPayAbleBeforeCoupon;
-    BigDecimal totalPayableAfterCoupon;
+    @JsonProperty("total_amount")
+    BigDecimal totalBlackPrice;
+    @JsonProperty("total_payable_amount")
+    BigDecimal totalRedPrice;
+    @JsonProperty("total_discount_amount")
+    BigDecimal totalDiscountAmount;
 
-    public BillData(ProductMeta purchasedProduct, BigDecimal totalAmount, BigDecimal totalPayAbleBeforeCoupon) {
-        this.purchasedProducts = new LinkedList<>();
-        this.purchasedProducts.add(purchasedProduct);
-        this.totalAmount = totalAmount;
-        this.totalPayAbleBeforeCoupon = totalPayAbleBeforeCoupon;
-    }
-
-    public BillData(List<ProductMeta> purchasedProducts, BigDecimal totalAmount, BigDecimal totalPayAbleBeforeCoupon) {
-        this.purchasedProducts = new LinkedList<>();
-        this.purchasedProducts.addAll(purchasedProducts);
-        this.totalAmount = totalAmount;
-        this.totalPayAbleBeforeCoupon = totalPayAbleBeforeCoupon;
-    }
-
-    public BillData() {
-        this.totalAmount = BigDecimal.ZERO;
-        this.totalPayAbleBeforeCoupon = BigDecimal.ZERO;
-        this.purchasedProducts = new LinkedList<>();
+    public BillData(List<ProductMeta> purchasedProducts, BigDecimal totalBlackPrice, BigDecimal totalRedPrice) {
+        this.purchasedProducts = purchasedProducts;
+        this.totalBlackPrice = totalBlackPrice;
+        this.totalRedPrice = totalRedPrice;
+        this.totalDiscountAmount = totalBlackPrice.subtract(totalRedPrice);
     }
 }

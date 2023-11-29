@@ -22,5 +22,16 @@ public class StringUtil {
         return destinationLocationName + " Tour - " + day + " " + night;
     }
 
+    public static String generateKey(Long availableTourPackageId,
+                               Long accommodationOptionId,
+                               Long foodOptionId,
+                               Long transferOptionId,
+                               Long transportationOptionId,
+                               Long guideOptionId,
+                               Long spotEntryOptionId) {
+        return availableTourPackageId + "_" + accommodationOptionId + "_" + foodOptionId + "_" + transferOptionId + "_" + transportationOptionId + "_" + guideOptionId + "_" + spotEntryOptionId;
+    }
+
+
 }
 

@@ -25,33 +25,29 @@ public class AvailableComponentsAllOptionsCombinationEntity extends BaseEntity {
     @JoinColumn(name = "available_tour_package_id", nullable = false)
     private AvailableTourPackageEntity availableTourPackageEntity;
 
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "available_accommodation_option_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "available_accommodation_option_id")
     private AvailableAccommodationOptionEntity availableAccommodationOptionEntity;
 
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "available_food_option_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "available_food_option_id")
     private AvailableFoodOptionEntity availableFoodOptionEntity;
 
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "available_transfer_option_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "available_transfer_option_id")
     private AvailableTransferOptionEntity availableTransferOptionEntity;
 
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "available_transportation_package_id", nullable = false)
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "available_transportation_package_id")
     private AvailableTransportationPackageEntity availableTransportationPackageEntity;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "available_guide_option_id")
     private AvailableGuideOptionEntity availableGuideOptionEntity;
 
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "available_spot_entry_option_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "available_spot_entry_option_id")
     private AvailableSpotEntryOptionEntity availableSpotEntryOptionEntity;
 
     @NotNull
@@ -94,5 +90,9 @@ public class AvailableComponentsAllOptionsCombinationEntity extends BaseEntity {
     @Column(name = "payment_gateway_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal paymentGatewayAmount;
 
+
+    @NotNull
+    @Column(name = "is_inclusive_options", nullable = false)
+    private Boolean isInclusiveOptions = false;
 
 }

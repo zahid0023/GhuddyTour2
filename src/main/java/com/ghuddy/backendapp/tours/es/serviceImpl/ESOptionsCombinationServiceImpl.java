@@ -43,13 +43,6 @@ public class ESOptionsCombinationServiceImpl implements ESOptionsCombinationServ
         List<ESTourComponentOptionCombinationDocument> allOptions = availableTourPackageEntity.getAvailableComponentsAllOptionsCombinationEntities().stream()
                 .map(availableComponentsAllOptionsCombinationEntity -> new ESTourComponentOptionCombinationDocument(availableComponentsAllOptionsCombinationEntity))
                 .collect(Collectors.toList());
-        log.info(allOptions.toString());
-        List<ESTourComponentOptionCombinationDocument> inclusiveOptions = availableTourPackageEntity.getAvailableComponentsInclusiveOptionEntities().stream()
-                .map(inclusiveOptionsCombinationEntity -> new ESTourComponentOptionCombinationDocument(inclusiveOptionsCombinationEntity))
-                .collect(Collectors.toList());
-        log.info(inclusiveOptions.toString());
-
-        allOptions.addAll(inclusiveOptions);
         return allOptions.stream().distinct().toList();
     }
 
@@ -65,10 +58,9 @@ public class ESOptionsCombinationServiceImpl implements ESOptionsCombinationServ
                 esOptionCombinationData.getGuideOptionId(),
                 esOptionCombinationData.getSpotEntryId()
         );
-        if (existingEsTourComponentOptionCombinationDocument.isPresent()){
+        if (existingEsTourComponentOptionCombinationDocument.isPresent()) {
             log.info(existingEsTourComponentOptionCombinationDocument.get().toString());
             return new ESComponentCombinationCheckResponse(existingEsTourComponentOptionCombinationDocument.get().getGhuddyWebsiteBlackPrice(), existingEsTourComponentOptionCombinationDocument.get().getGhuddyWebsiteRedPrice());
-        }
-        else throw new EntityNotFoundException("Option Not Found");
+        } else throw new EntityNotFoundException("Option Not Found");
     }
 }

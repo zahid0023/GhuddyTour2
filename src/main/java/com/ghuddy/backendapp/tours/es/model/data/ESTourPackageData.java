@@ -83,16 +83,16 @@ public class ESTourPackageData {
         this.esSubscribedTourItineraryDataList = getTourItinerary(esTourPackageDocument.getEsSubscribedTourItineraryDocumentList());
 
         this.defaultOptionCombinationData = new DefaultOptionCombinationData(
-                isAccommodationInclusive ?
+                isAccommodationInclusive & !esAccommodationOptionDataList.isEmpty() ?
                         esAccommodationOptionDataList.get(0).getAvailableAccommodationOptionId() : 0,
-                isFoodInclusive ?
+                isFoodInclusive & !esFoodOptionDataList.isEmpty()?
                         esFoodOptionDataList.get(0).getAvailableFoodOptionId() : 0,
-                isTransferInclusive ?
+                isTransferInclusive & !esTransferOptionDataList.isEmpty() ?
                         esTransferOptionDataList.get(0).getAvailableTransferOptionId() : 0,
                 0L,
-                isGuideInclusive ?
+                isGuideInclusive & !esGuideOptionDataList.isEmpty()?
                         esGuideOptionDataList.get(0).getAvailableGuideOptionId() : 0,
-                isSpotEntryInclusive ?
+                isSpotEntryInclusive & !esSpotEntryOptionDataList.isEmpty()?
                         esSpotEntryOptionDataList.get(0).getAvailableSpotEntryOptionId() : 0
         );
     }

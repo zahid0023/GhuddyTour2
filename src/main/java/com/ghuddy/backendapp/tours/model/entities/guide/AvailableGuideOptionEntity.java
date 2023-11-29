@@ -2,7 +2,6 @@ package com.ghuddy.backendapp.tours.model.entities.guide;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +28,6 @@ public class AvailableGuideOptionEntity extends BaseEntity {
     @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
-
-    @OneToMany(mappedBy = "availableGuideOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AvailableComponentsInclusiveOptionsCombinationEntity> availableComponentsInclusiveOptionEntities = new LinkedList<>();
 
     @OneToMany(mappedBy = "availableGuideOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AvailableComponentsAllOptionsCombinationEntity> availableComponentsAllOptionsCombinationEntities = new ArrayList<>();

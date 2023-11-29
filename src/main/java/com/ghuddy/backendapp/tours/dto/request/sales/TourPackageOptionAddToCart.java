@@ -22,7 +22,7 @@ public class TourPackageOptionAddToCart {
     @JsonProperty("tour_package_transportation_package_id")
     private Long transportationPackageId;
     @Schema(description = "The guide option id", required = true, example = "1")
-    @JsonProperty("tour_guide_accommodation_option_id")
+    @JsonProperty("tour_package_guide_option_id")
     private Long guideOptionId;
     @Schema(description = "The spot entry option id", required = true, example = "1")
     @JsonProperty("tour_package_spot_entry_option_id")

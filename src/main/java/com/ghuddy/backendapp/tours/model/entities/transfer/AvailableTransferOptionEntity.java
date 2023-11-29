@@ -2,7 +2,6 @@ package com.ghuddy.backendapp.tours.model.entities.transfer;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPackageEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +30,6 @@ public class AvailableTransferOptionEntity extends BaseEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-
-    @OneToMany(mappedBy = "availableTransferOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AvailableComponentsInclusiveOptionsCombinationEntity> availableComponentsInclusiveOptionEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "availableTransferOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AvailableComponentsAllOptionsCombinationEntity> availableComponentsAllOptionsCombinationEntities = new ArrayList<>();

@@ -74,8 +74,7 @@ public class TourControllerForUser {
     }
 
     @RequestMapping(value = "/tours/bill-calculation/for-query", method = RequestMethod.POST)
-    public ResponseEntity<ESBillCalculationResponse> calculateBill(@RequestBody BillCalculationRequest request, String requestId) throws IOException, AbstractException {
-        esBillCalculationService.calculateBill(request);
-        return null;
+    public ResponseEntity<ESBillCalculationResponse> calculateBill(@RequestBody BillCalculationRequest request) throws IOException, AbstractException {
+        return new ResponseEntity<>(esBillCalculationService.calculateBill(request), HttpStatus.OK);
     }
 }

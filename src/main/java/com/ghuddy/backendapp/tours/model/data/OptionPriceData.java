@@ -2,7 +2,6 @@ package com.ghuddy.backendapp.tours.model.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,19 +41,6 @@ public class OptionPriceData {
     @Schema(description = "The payment gateway service amount")
     @JsonProperty("payment_gateway_amount")
     private BigDecimal paymentGateWayAmount;
-
-    public OptionPriceData(AvailableComponentsInclusiveOptionsCombinationEntity availableComponentsInclusiveOptionsCombinationEntity){
-        this.ghuddyPlatformCalculatedOptionPrice = availableComponentsInclusiveOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson();
-        this.merchantSubsidyAmount = availableComponentsInclusiveOptionsCombinationEntity.getMerchantSubsidyAmountPerPerson();
-        this.netOptionPriceAfterMerchantSubsidy = availableComponentsInclusiveOptionsCombinationEntity.getNetOptionPricePerPersonAfterMerchantSubsidy();
-        this.ghuddyPlatformCommissionAmount = availableComponentsInclusiveOptionsCombinationEntity.getGhuddyPlatformCommissionAmount();
-        this.netOptionPriceAfterGhuddyCommission = availableComponentsInclusiveOptionsCombinationEntity.getNetOptionPricePerPersonAfterGhuddyCommission();
-        this.ghuddyWebsiteBlackPrice = availableComponentsInclusiveOptionsCombinationEntity.getGhuddyWebsiteBlackPricePerPerson();
-        this.ghuddySubsidyAmount = availableComponentsInclusiveOptionsCombinationEntity.getGhuddySubsidyAmountPerPerson();
-        this.netOptionPriceAfterGhuddySubsidy = availableComponentsInclusiveOptionsCombinationEntity.getNetOptionPricePerPersonAfterGhuddySubsidy();
-        this.ghuddyWebsiteRedPrice = availableComponentsInclusiveOptionsCombinationEntity.getGhuddyWebsiteRedPricePerPerson();
-        this.paymentGateWayAmount = availableComponentsInclusiveOptionsCombinationEntity.getPaymentGatewayAmount();
-    }
     public OptionPriceData(AvailableComponentsAllOptionsCombinationEntity availableComponentsAllOptionsCombinationEntity){
         this.ghuddyPlatformCalculatedOptionPrice = availableComponentsAllOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson();
         this.merchantSubsidyAmount = availableComponentsAllOptionsCombinationEntity.getMerchantSubsidyAmountPerPerson();

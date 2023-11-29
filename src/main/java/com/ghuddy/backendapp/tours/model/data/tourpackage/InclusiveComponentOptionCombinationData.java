@@ -7,7 +7,7 @@ import com.ghuddy.backendapp.tours.model.data.food.AvailableFoodOptionData;
 import com.ghuddy.backendapp.tours.model.data.guide.AvailableGuideOptionData;
 import com.ghuddy.backendapp.tours.model.data.spot.entry.AvailableSpotEntryOptionData;
 import com.ghuddy.backendapp.tours.model.data.transfer.AvailableTransferOptionData;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsInclusiveOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
 import lombok.Data;
 
 @Data
@@ -24,7 +24,7 @@ public class InclusiveComponentOptionCombinationData {
     private AvailableSpotEntryOptionData availableSpotEntryOptionData;
     @JsonProperty("tour_package_option_price_details_per_person")
     private OptionPriceData optionPriceData;
-    public InclusiveComponentOptionCombinationData(AvailableComponentsInclusiveOptionsCombinationEntity availableComponentsInclusiveOptionsCombinationEntity){
+    public InclusiveComponentOptionCombinationData(AvailableComponentsAllOptionsCombinationEntity availableComponentsInclusiveOptionsCombinationEntity){
         this.availableAccommodationOptionData = new AvailableAccommodationOptionData(availableComponentsInclusiveOptionsCombinationEntity.getAvailableAccommodationOptionEntity());
         this.availableFoodOptionData = new AvailableFoodOptionData(availableComponentsInclusiveOptionsCombinationEntity.getAvailableFoodOptionEntity());
         this.availableTransferOptionData = new AvailableTransferOptionData(availableComponentsInclusiveOptionsCombinationEntity.getAvailableTransferOptionEntity());
