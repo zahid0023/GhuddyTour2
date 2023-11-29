@@ -7,6 +7,7 @@ import com.ghuddy.backendapp.tours.dto.response.commons.InsertAcknowledgeRespons
 import com.ghuddy.backendapp.tours.dto.response.food.*;
 import com.ghuddy.backendapp.tours.enums.ErrorCode;
 import com.ghuddy.backendapp.tours.exception.EmptyListException;
+import com.ghuddy.backendapp.tours.model.data.food.FlatMealPackageData;
 import com.ghuddy.backendapp.tours.model.data.food.FoodItemData;
 import com.ghuddy.backendapp.tours.model.data.food.MealPackageData;
 import com.ghuddy.backendapp.tours.model.data.food.MealTypeData;
@@ -255,5 +256,12 @@ public class FoodServiceImpl implements FoodService {
         return subscribedTourEntity.getMealPackageEntities().stream()
                 .map(mealPackageEntity -> new MealPackageData(mealPackageEntity))
                 .collect(Collectors.groupingBy(mealPackageData -> mealPackageData.getMealTypeId()));
+    }
+
+    @Override
+    public List<FlatMealPackageData> getAllFlatMealPackagesForSubscribedTour(SubscribedTourEntity subscribedTourEntity, String requestId) {
+        return subscribedTourEntity.getMealPackageEntities().stream()
+                .map(mealPackageEntity -> new FlatMealPackageData(mealPackageEntity))
+                .toList();
     }
 }

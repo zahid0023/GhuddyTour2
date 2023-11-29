@@ -7,6 +7,7 @@ import com.ghuddy.backendapp.tours.dto.response.food.FoodItemListResponse;
 import com.ghuddy.backendapp.tours.dto.response.food.MealPackageAddListResponse;
 import com.ghuddy.backendapp.tours.dto.response.food.MealTypeListResponse;
 import com.ghuddy.backendapp.tours.exception.EmptyListException;
+import com.ghuddy.backendapp.tours.model.data.food.FlatMealPackageData;
 import com.ghuddy.backendapp.tours.model.data.food.MealPackageData;
 import com.ghuddy.backendapp.tours.model.entities.food.FoodItemEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.MealPackageEntity;
@@ -50,5 +51,6 @@ public interface FoodService {
     List<MealPackageEntity> setTourMealPackages(SubscribedTourEntity subscribedTourEntity, List<MealPackageRequest> mealPackageRequestList);
     Map<Long, MealPackageEntity> getMealPackageEntitiesByIds(Set<Long> mealPackageIds);
     Map<Long, List<MealPackageData>> getAllMealPackagesForSubscribedTour(SubscribedTourEntity subscribedTourEntity, String requestId);
+    List<FlatMealPackageData> getAllFlatMealPackagesForSubscribedTour(SubscribedTourEntity subscribedTourEntity, String requestId);
 
 }

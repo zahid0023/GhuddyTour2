@@ -100,4 +100,14 @@ public class FoodControllerForMerchant {
             return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode(), requestId), HttpStatus.NOT_FOUND);
         }
     }
+
+    @RequestMapping(path = "/tour/meal/package/flat/get/all/by/{subscribed-tour-id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getTourMealPackagesBySubscribedTourId(@PathVariable("subscribed-tour-id") Long subscribedTourId, @RequestParam String requestId) {
+        try {
+            SubscribedTourEntity subscribedTourEntity = tourSubscriptionService.getSubscribedTourEntityById(subscribedTourId);
+            return new ResponseEntity<>(foodService.getAllFlatMealPackagesForSubscribedTour(subscribedTourEntity, requestId), HttpStatus.OK);
+        } catch (TourNotFoundException ex) {
+            return new ResponseEntity<>(new ErrorResponse(ex.getErrorCode(), requestId), HttpStatus.NOT_FOUND);
+        }
+    }
 }
