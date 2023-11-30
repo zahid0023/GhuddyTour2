@@ -1,5 +1,7 @@
 package com.ghuddy.backendapp.tours.utils;
 
+import com.ghuddy.backendapp.tours.dto.request.sales.TourPackageOptionAddToCart;
+
 public class StringUtil {
     public static String slugify(String str1, String str2) {
         // Remove special characters and spaces, and convert to lowercase
@@ -31,7 +33,6 @@ public class StringUtil {
                                Long spotEntryOptionId) {
         return availableTourPackageId + "_" + accommodationOptionId + "_" + foodOptionId + "_" + transferOptionId + "_" + transportationOptionId + "_" + guideOptionId + "_" + spotEntryOptionId;
     }
-
 
 }
 

@@ -1,7 +1,7 @@
 package com.ghuddy.backendapp.tours.model.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableTourPackageOptionEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,16 +41,16 @@ public class OptionPriceData {
     @Schema(description = "The payment gateway service amount")
     @JsonProperty("payment_gateway_amount")
     private BigDecimal paymentGateWayAmount;
-    public OptionPriceData(AvailableComponentsAllOptionsCombinationEntity availableComponentsAllOptionsCombinationEntity){
-        this.ghuddyPlatformCalculatedOptionPrice = availableComponentsAllOptionsCombinationEntity.getGhuddyPlatformCalculatedOptionPricePerPerson();
-        this.merchantSubsidyAmount = availableComponentsAllOptionsCombinationEntity.getMerchantSubsidyAmountPerPerson();
-        this.netOptionPriceAfterMerchantSubsidy = availableComponentsAllOptionsCombinationEntity.getNetOptionPricePerPersonAfterMerchantSubsidy();
-        this.ghuddyPlatformCommissionAmount = availableComponentsAllOptionsCombinationEntity.getGhuddyPlatformCommissionAmount();
-        this.netOptionPriceAfterGhuddyCommission = availableComponentsAllOptionsCombinationEntity.getNetOptionPricePerPersonAfterGhuddyCommission();
-        this.ghuddyWebsiteBlackPrice = availableComponentsAllOptionsCombinationEntity.getGhuddyWebsiteBlackPricePerPerson();
-        this.ghuddySubsidyAmount = availableComponentsAllOptionsCombinationEntity.getGhuddySubsidyAmountPerPerson();
-        this.netOptionPriceAfterGhuddySubsidy = availableComponentsAllOptionsCombinationEntity.getNetOptionPricePerPersonAfterGhuddySubsidy();
-        this.ghuddyWebsiteRedPrice = availableComponentsAllOptionsCombinationEntity.getGhuddyWebsiteRedPricePerPerson();
-        this.paymentGateWayAmount = availableComponentsAllOptionsCombinationEntity.getPaymentGatewayAmount();
+    public OptionPriceData(AvailableTourPackageOptionEntity availableTourPackageOptionEntity){
+        this.ghuddyPlatformCalculatedOptionPrice = availableTourPackageOptionEntity.getGhuddyPlatformCalculatedOptionPricePerPerson();
+        this.merchantSubsidyAmount = availableTourPackageOptionEntity.getMerchantSubsidyAmountPerPerson();
+        this.netOptionPriceAfterMerchantSubsidy = availableTourPackageOptionEntity.getNetOptionPricePerPersonAfterMerchantSubsidy();
+        this.ghuddyPlatformCommissionAmount = availableTourPackageOptionEntity.getGhuddyPlatformCommissionAmount();
+        this.netOptionPriceAfterGhuddyCommission = availableTourPackageOptionEntity.getNetOptionPricePerPersonAfterGhuddyCommission();
+        this.ghuddyWebsiteBlackPrice = availableTourPackageOptionEntity.getGhuddyWebsiteBlackPricePerPerson();
+        this.ghuddySubsidyAmount = availableTourPackageOptionEntity.getGhuddySubsidyAmountPerPerson();
+        this.netOptionPriceAfterGhuddySubsidy = availableTourPackageOptionEntity.getNetOptionPricePerPersonAfterGhuddySubsidy();
+        this.ghuddyWebsiteRedPrice = availableTourPackageOptionEntity.getGhuddyWebsiteRedPricePerPerson();
+        this.paymentGateWayAmount = availableTourPackageOptionEntity.getPaymentGatewayAmount();
     }
 }

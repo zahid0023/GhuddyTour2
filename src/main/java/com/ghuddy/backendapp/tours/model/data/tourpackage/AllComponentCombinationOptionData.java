@@ -8,7 +8,7 @@ import com.ghuddy.backendapp.tours.model.data.guide.AvailableGuideOptionData;
 import com.ghuddy.backendapp.tours.model.data.spot.entry.AvailableSpotEntryOptionData;
 import com.ghuddy.backendapp.tours.model.data.transfer.AvailableTransferOptionData;
 import com.ghuddy.backendapp.tours.model.data.transportation.AvailableTransportationPackageData;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableTourPackageOptionEntity;
 import lombok.Data;
 
 @Data
@@ -27,13 +27,13 @@ public class AllComponentCombinationOptionData {
     private AvailableSpotEntryOptionData availableSpotEntryOptionData;
     @JsonProperty("tour_package_option_price_details_per_person")
     private OptionPriceData optionPriceData;
-    public AllComponentCombinationOptionData(AvailableComponentsAllOptionsCombinationEntity availableComponentsAllOptionsCombinationEntity){
-        this.availableAccommodationOptionData = new AvailableAccommodationOptionData(availableComponentsAllOptionsCombinationEntity.getAvailableAccommodationOptionEntity());
-        this.availableFoodOptionData = new AvailableFoodOptionData(availableComponentsAllOptionsCombinationEntity.getAvailableFoodOptionEntity());
-        this.availableTransferOptionData = new AvailableTransferOptionData(availableComponentsAllOptionsCombinationEntity.getAvailableTransferOptionEntity());
-        this.availableTransportationPackageData = new AvailableTransportationPackageData(availableComponentsAllOptionsCombinationEntity.getAvailableTransportationPackageEntity());
-        this.availableGuideOptionData = new AvailableGuideOptionData(availableComponentsAllOptionsCombinationEntity.getAvailableGuideOptionEntity());
-        this.availableSpotEntryOptionData = new AvailableSpotEntryOptionData(availableComponentsAllOptionsCombinationEntity.getAvailableSpotEntryOptionEntity());
-        this.optionPriceData = new OptionPriceData(availableComponentsAllOptionsCombinationEntity);
+    public AllComponentCombinationOptionData(AvailableTourPackageOptionEntity availableTourPackageOptionEntity){
+        this.availableAccommodationOptionData = new AvailableAccommodationOptionData(availableTourPackageOptionEntity.getAvailableAccommodationOptionEntity());
+        this.availableFoodOptionData = new AvailableFoodOptionData(availableTourPackageOptionEntity.getAvailableFoodOptionEntity());
+        this.availableTransferOptionData = new AvailableTransferOptionData(availableTourPackageOptionEntity.getAvailableTransferOptionEntity());
+        this.availableTransportationPackageData = new AvailableTransportationPackageData(availableTourPackageOptionEntity.getAvailableTransportationPackageEntity());
+        this.availableGuideOptionData = new AvailableGuideOptionData(availableTourPackageOptionEntity.getAvailableGuideOptionEntity());
+        this.availableSpotEntryOptionData = new AvailableSpotEntryOptionData(availableTourPackageOptionEntity.getAvailableSpotEntryOptionEntity());
+        this.optionPriceData = new OptionPriceData(availableTourPackageOptionEntity);
     }
 }

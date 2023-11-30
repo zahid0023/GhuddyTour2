@@ -1,7 +1,7 @@
 package com.ghuddy.backendapp.tours.model.entities.tourpackage;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableTourPackageOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableFoodOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.guide.AvailableGuideOptionEntity;
@@ -96,6 +96,6 @@ public class AvailableTourPackageEntity extends BaseEntity {
     private List<AvailableSpotEntryOptionEntity> availableSpotEntryOptionEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "availableTourPackageEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AvailableComponentsAllOptionsCombinationEntity> availableComponentsAllOptionsCombinationEntities = new ArrayList<>();
+    private List<AvailableTourPackageOptionEntity> availableComponentsAllOptionsCombinationEntities = new ArrayList<>();
 
 }

@@ -1,6 +1,6 @@
 package com.ghuddy.backendapp.tours.es.model.entities;
 
-import com.ghuddy.backendapp.tours.model.entities.combination.AvailableComponentsAllOptionsCombinationEntity;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableTourPackageOptionEntity;
 import com.ghuddy.backendapp.tours.utils.StringUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,33 +45,33 @@ public class ESTourComponentOptionCombinationDocument {
     @Field(name = "key", type = FieldType.Keyword)
     private String key;
 
-    public ESTourComponentOptionCombinationDocument(AvailableComponentsAllOptionsCombinationEntity availableComponentsAllOptionsCombinationEntity) {
-        this.optionId = availableComponentsAllOptionsCombinationEntity.getId();
-        this.availableTourPackageId = availableComponentsAllOptionsCombinationEntity.getAvailableTourPackageEntity().getId();
-        this.accommodationOptionId = availableComponentsAllOptionsCombinationEntity.getAvailableAccommodationOptionEntity() != null
-                ? availableComponentsAllOptionsCombinationEntity.getAvailableAccommodationOptionEntity().getId()
+    public ESTourComponentOptionCombinationDocument(AvailableTourPackageOptionEntity availableTourPackageOptionEntity) {
+        this.optionId = availableTourPackageOptionEntity.getId();
+        this.availableTourPackageId = availableTourPackageOptionEntity.getAvailableTourPackageEntity().getId();
+        this.accommodationOptionId = availableTourPackageOptionEntity.getAvailableAccommodationOptionEntity() != null
+                ? availableTourPackageOptionEntity.getAvailableAccommodationOptionEntity().getId()
                 : 0;
-        this.foodOptionId = availableComponentsAllOptionsCombinationEntity.getAvailableFoodOptionEntity() != null
-                ? availableComponentsAllOptionsCombinationEntity.getAvailableFoodOptionEntity().getId()
+        this.foodOptionId = availableTourPackageOptionEntity.getAvailableFoodOptionEntity() != null
+                ? availableTourPackageOptionEntity.getAvailableFoodOptionEntity().getId()
                 : 0;
-        this.transferOptionId = availableComponentsAllOptionsCombinationEntity.getAvailableTransferOptionEntity() != null
-                ? availableComponentsAllOptionsCombinationEntity.getAvailableTransferOptionEntity().getId()
+        this.transferOptionId = availableTourPackageOptionEntity.getAvailableTransferOptionEntity() != null
+                ? availableTourPackageOptionEntity.getAvailableTransferOptionEntity().getId()
                 : 0;
-        this.transportationOptionId = availableComponentsAllOptionsCombinationEntity.getAvailableTransportationPackageEntity() != null
-                ? availableComponentsAllOptionsCombinationEntity.getAvailableTransportationPackageEntity().getId()
+        this.transportationOptionId = availableTourPackageOptionEntity.getAvailableTransportationPackageEntity() != null
+                ? availableTourPackageOptionEntity.getAvailableTransportationPackageEntity().getId()
                 : 0;
-        this.guideOptionId = availableComponentsAllOptionsCombinationEntity.getAvailableGuideOptionEntity() != null
-                ? availableComponentsAllOptionsCombinationEntity.getAvailableGuideOptionEntity().getId()
+        this.guideOptionId = availableTourPackageOptionEntity.getAvailableGuideOptionEntity() != null
+                ? availableTourPackageOptionEntity.getAvailableGuideOptionEntity().getId()
                 : 0;
-        this.spotEntryOptionId = availableComponentsAllOptionsCombinationEntity.getAvailableSpotEntryOptionEntity() != null
-                ? availableComponentsAllOptionsCombinationEntity.getAvailableSpotEntryOptionEntity().getId()
+        this.spotEntryOptionId = availableTourPackageOptionEntity.getAvailableSpotEntryOptionEntity() != null
+                ? availableTourPackageOptionEntity.getAvailableSpotEntryOptionEntity().getId()
                 : 0;
 
-        this.ghuddyWebsiteBlackPrice = availableComponentsAllOptionsCombinationEntity.getGhuddyWebsiteBlackPricePerPerson();
-        this.ghuddyWebsiteRedPrice = availableComponentsAllOptionsCombinationEntity.getGhuddyWebsiteRedPricePerPerson();
+        this.ghuddyWebsiteBlackPrice = availableTourPackageOptionEntity.getGhuddyWebsiteBlackPricePerPerson();
+        this.ghuddyWebsiteRedPrice = availableTourPackageOptionEntity.getGhuddyWebsiteRedPricePerPerson();
 
         this.configId = UUID.randomUUID().toString().toUpperCase();
-        this.title = availableComponentsAllOptionsCombinationEntity.getAvailableTourPackageEntity().getTourPackageTypeEntity().getPackageTypeName() + " (" + availableComponentsAllOptionsCombinationEntity.getAvailableTourPackageEntity().getTourStartDate() + ")";
+        this.title = availableTourPackageOptionEntity.getAvailableTourPackageEntity().getTourPackageTypeEntity().getPackageTypeName() + " (" + availableTourPackageOptionEntity.getAvailableTourPackageEntity().getTourStartDate() + ")";
 
         this.key = StringUtil.generateKey(
                 this.availableTourPackageId,

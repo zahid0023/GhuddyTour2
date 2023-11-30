@@ -2,6 +2,7 @@ package com.ghuddy.backendapp.tours.model.entities.combination;
 
 import com.ghuddy.backendapp.model.db.BaseEntity;
 import com.ghuddy.backendapp.tours.model.entities.accommodation.AvailableAccommodationOptionEntity;
+import com.ghuddy.backendapp.tours.model.entities.booking.TourPackageOptionBookingEntity;
 import com.ghuddy.backendapp.tours.model.entities.food.AvailableFoodOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.guide.AvailableGuideOptionEntity;
 import com.ghuddy.backendapp.tours.model.entities.spot.entry.AvailableSpotEntryOptionEntity;
@@ -14,12 +15,14 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "available_components_all_options_combinations")
-public class AvailableComponentsAllOptionsCombinationEntity extends BaseEntity {
+public class AvailableTourPackageOptionEntity extends BaseEntity {
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "available_tour_package_id", nullable = false)
@@ -94,5 +97,8 @@ public class AvailableComponentsAllOptionsCombinationEntity extends BaseEntity {
     @NotNull
     @Column(name = "is_inclusive_options", nullable = false)
     private Boolean isInclusiveOptions = false;
+
+    @OneToMany(mappedBy = "availableOptionEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourPackageOptionBookingEntity> tourPackageOptionBookingEntities = new ArrayList<>();
 
 }

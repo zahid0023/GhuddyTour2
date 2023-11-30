@@ -2,11 +2,13 @@ package com.ghuddy.backendapp.tours.dto.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ghuddy.backendapp.tours.es.model.entities.ESTourComponentOptionCombinationDocument;
+import com.ghuddy.backendapp.tours.model.entities.combination.AvailableTourPackageOptionEntity;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.UUID;
 
 @Data
 public class ProductMeta implements Serializable {
@@ -41,6 +43,18 @@ public class ProductMeta implements Serializable {
         this.quantity = Long.valueOf(quantity);
         this.totalBlackPrice = unitBlackPrice.multiply(BigDecimal.valueOf(quantity));
         this.totalRedPrice = unitRedPrice.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    public ProductMeta(AvailableTourPackageOptionEntity availableTourPackageOptionEntity, Integer quantity){
+        this.configId = String.valueOf(UUID.randomUUID());
+        this.title = "title";
+        this.description = "description";
+        this.productType = "TOUR";
+        this.unitBlackPrice = availableTourPackageOptionEntity.getGhuddyWebsiteBlackPricePerPerson();
+        this.unitRedPrice = availableTourPackageOptionEntity.getGhuddyWebsiteRedPricePerPerson();
+        this.quantity = Long.valueOf(quantity);
+        this.totalBlackPrice = unitBlackPrice.multiply(BigDecimal.valueOf(quantity));
+        this.totalRedPrice = unitBlackPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }
 

@@ -1,9 +1,12 @@
 package com.ghuddy.backendapp.model;
 
 
+import com.ghuddy.backendapp.tours.model.entities.booking.SalesOrderEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author : anisuzzaman
@@ -27,5 +30,8 @@ public class UserEntity {
 
     @Column(name = "user_name")
     private String userName;
+
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SalesOrderEntity> salesOrderEntities = new ArrayList<>();
 
 }

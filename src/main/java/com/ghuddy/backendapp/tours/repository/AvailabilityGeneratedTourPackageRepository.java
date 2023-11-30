@@ -4,4 +4,5 @@ import com.ghuddy.backendapp.tours.model.entities.tourpackage.AvailableTourPacka
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AvailabilityGeneratedTourPackageRepository extends JpaRepository<AvailableTourPackageEntity, Long> {
+
 }
