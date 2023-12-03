@@ -14,7 +14,7 @@ public class GuidePackageListAddRequest extends BaseRequest {
     @JsonProperty("subscribed_tour_id")
     private Long subscribedTourId;
     @Schema(description = "The list of guide packages for this tour", required = true)
-    @JsonProperty("guide_packages")
+    @JsonProperty("tour_guide_packages")
     private List<GuidePackageRequest> guidePackageRequestList;
 
     @Override

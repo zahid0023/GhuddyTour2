@@ -12,7 +12,7 @@ import java.util.Map;
 @Data
 public class MealPackageAddListResponse extends BaseResponse {
     @Schema(description = "The meal packages")
-    @JsonProperty("tour_package_meal_packages")
+    @JsonProperty("tour_meal_packages")
     Map<Long, List<MealPackageData>> mealPackages;
 
     public MealPackageAddListResponse(Map<Long, List<MealPackageData>> mealPackages, String requestId) {

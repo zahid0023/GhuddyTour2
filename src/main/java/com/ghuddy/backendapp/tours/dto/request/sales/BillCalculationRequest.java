@@ -1,4 +1,4 @@
-package com.ghuddy.backendapp.tours.dto.response.sales;
+package com.ghuddy.backendapp.tours.dto.request.sales;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ghuddy.backendapp.dto.request.BaseRequest;

@@ -3,7 +3,7 @@ package com.ghuddy.backendapp.tours.es.serviceImpl;
 import com.ghuddy.backendapp.tours.dto.data.BillData;
 import com.ghuddy.backendapp.tours.dto.data.ProductMeta;
 import com.ghuddy.backendapp.tours.dto.request.sales.TourPackageOptionAddToCart;
-import com.ghuddy.backendapp.tours.dto.response.sales.BillCalculationRequest;
+import com.ghuddy.backendapp.tours.dto.request.sales.BillCalculationRequest;
 import com.ghuddy.backendapp.tours.es.dto.response.ESBillCalculationResponse;
 import com.ghuddy.backendapp.tours.es.model.entities.ESTourComponentOptionCombinationDocument;
 import com.ghuddy.backendapp.tours.es.service.ESBillCalculationService;
@@ -15,18 +15,14 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 

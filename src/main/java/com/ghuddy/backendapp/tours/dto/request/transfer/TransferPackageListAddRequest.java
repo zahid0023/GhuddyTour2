@@ -14,7 +14,7 @@ public class TransferPackageListAddRequest extends BaseRequest {
     @JsonProperty("subscribed_tour_id")
     private Long subscribedTourId;
     @Schema(description = "The list of transfer packages for this tour", required = true)
-    @JsonProperty("transfer_packages")
+    @JsonProperty("tour_transfer_packages")
     private List<TransferPackageRequest> transferPackageRequestList;
 
     @Override

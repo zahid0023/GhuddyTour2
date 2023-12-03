@@ -15,7 +15,7 @@ public class SpotEntryPackageListAddRequest extends BaseRequest {
     private Long subscribedTourId;
 
     @Schema(description = "The spot entry request list", required = true)
-    @JsonProperty("spot_entries")
+    @JsonProperty("tour_spot_entry_packages")
     private List<SpotEntryPackageRequest> spotEntryPackageRequestList;
 
     /**

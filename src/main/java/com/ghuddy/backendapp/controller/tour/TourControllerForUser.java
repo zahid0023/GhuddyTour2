@@ -2,7 +2,7 @@ package com.ghuddy.backendapp.controller.tour;
 
 import com.ghuddy.backendapp.exception.AbstractException;
 import com.ghuddy.backendapp.tours.dto.response.commons.ErrorResponse;
-import com.ghuddy.backendapp.tours.dto.response.sales.BillCalculationRequest;
+import com.ghuddy.backendapp.tours.dto.request.sales.BillCalculationRequest;
 import com.ghuddy.backendapp.tours.es.dto.data.ESOptionCombinationData;
 import com.ghuddy.backendapp.tours.es.dto.response.ESBillCalculationResponse;
 import com.ghuddy.backendapp.tours.es.service.ESBillCalculationService;

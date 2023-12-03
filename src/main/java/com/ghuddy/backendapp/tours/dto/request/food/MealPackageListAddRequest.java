@@ -14,7 +14,7 @@ public class MealPackageListAddRequest extends BaseRequest {
     @JsonProperty("subscribed_tour_id")
     private Long subscribedTourId;
     @Schema(description = "The list of meal packages to add",required = true)
-    @JsonProperty("tour_package_meal_packages")
+    @JsonProperty("tour_meal_packages")
     private List<MealPackageRequest> mealPackageRequestList;
 
     /**
